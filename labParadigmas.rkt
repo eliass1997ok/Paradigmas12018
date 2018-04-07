@@ -120,7 +120,7 @@
               "["
               (number->string (date-day (getDate message))) "-"
               (number->string (date-month (getDate message))) "-"
-              (number->string (date-year (getDate message))) "]"
+              (number->string (date-year (getDate message))) "] "
               (number->string (date-hour (getDate message))) ":"
               (number->string (date-minute (getDate message))) ":"
               (number->string (date-second (getDate message))) " "
