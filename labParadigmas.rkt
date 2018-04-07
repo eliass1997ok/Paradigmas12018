@@ -19,12 +19,15 @@
 
 (define-struct chatbot
   (
-   rate
-   saludos
+   saludosMañana ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
+   saludosTarde  ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
+   saludosNoche  ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
+   viajes ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
+   rate   ;Nota o evaluación del bot
    )
   )
 
-;CARGAR LOG
+;CARGAR LOG. SE UTILIZARÁ PARA EVALUAR DIALOGOS.
 (define getLog
   (if (not (file-exists? filename))
       '()
@@ -32,12 +35,39 @@
       )
   )
 
-;(define (beginChat chatbot log seed)
-;  (if (< (date-hour (current-date)) 12)
-;      (cond
-;        [
-  
 
+(define (selectGreetings chatbot)
+  (let ((hour (date-hour (current-date))))
+  (cond
+    [(< hour 12) chatbot-saludosMañana]
+    [(and (>= hour 12) (< hour 20)) chatbot-saludosTarde]
+    [else chatbot-saludosNoche]
+    )
+  )
+  )
+
+(define test-chatbot (make-chatbot
+  '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
+    "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
+  '("Buenas tardes, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"
+    "Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?")
+  '("Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?"
+    "Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?")
+  '('('Valparaíso . 5000) '('Punta Arenas . 3000))
+  5
+  )
+  )
+
+(define (beginDialog chatbot log seed)
+  ;(define rate)
+  (display (randomElement ((selectGreetings chatbot) chatbot) seed))
+  (messageToLog (message (current-date) "Bot" (randomElement ((selectGreetings chatbot) chatbot) seed)))
+  )
+
+
+
+
+                          
 ;CONSTRUCTOR
 (define (message date autor text)
   (if (and (date*? date) (string? autor) (string? text))
@@ -141,4 +171,10 @@
     )
   (myRandom seed)
   )
+
+(define randomElement
+  (lambda (ls seed)
+      (list-ref ls (remainder (myRandom seed) (length ls)))
+      )
+    )
 
