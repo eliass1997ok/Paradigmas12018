@@ -24,6 +24,8 @@
    saludosNoche  ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
    ofrecerNombre ;Lista en la que se tendrán los primeros diálogos para respuestas tras el nombre
    noEntender    ;Lista en la que se tendrán las respuestas en caso de que el bot no entienda el flujo de conversación
+   respuestaViaje1 ;Lista en la que se tendrán  los inicios a una respuesta tras identificar el viaje
+   respuestaViaje2 ;Continuación de respuesta, la que permite saber el precio
    viajes ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
    rate   ;Nota o evaluación del bot
    ID     ;Identificador del bot
@@ -38,6 +40,17 @@
       )
   )
 
+;(define (compareAndFindCity city list)
+;    (if (empty? list)
+;      #f
+;      (if (string=? (caar list) city)
+;          #t
+;          (compareAndFindCity city (cdr list))
+;          )
+;      )
+;  )
+
+;Recursión de Cola
 
 (define (selectGreetings chatbot)
   (let ((hour (date-hour (current-date))))
@@ -61,7 +74,11 @@
     " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año.")
   '("Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?"
     "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?")
-  '('('Valparaíso . 5000) '('Punta Arenas . 3000))
+  '("¡Es la mejor elección que pudiste elegir! "
+    "¡Excelente elección! ")
+  '(" es un lugar precioso! Los pasajes hacia allá cuestan "
+    " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
+  (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
   5
   0
   )
@@ -100,6 +117,13 @@
   )
 
 (define (sendMessage msg chatbot log seed)
+  (define (elementInCommon? list1 list2)
+  (cond
+    [(or (empty? list1) (empty? list2)) #f]
+    [(member (car list1) list2) #t]
+    [else (elementInCommon? (cdr list1) list2)]
+    )
+  )
   (define (answerToName nombre)
     (display (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed)))
     (messageToLog (message (current-date) "Bot" (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed))))
@@ -108,14 +132,42 @@
     (display (randomElement (chatbot-noEntender chatbot) seed))
     (messageToLog (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))
     )
+  (define (answerToCity pair chatbot seed)
+    (display (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair)))
+    (messageToLog (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair))))
+    )
+  
+  (define (getCityList list1 listOfList)
+    (define intersect
+    (lambda (set1 set2)
+            (letrec
+              ((I (lambda (set)
+                      (cond
+                           ((null? set) (quote ()))
+                           ((member (car set) set2)
+                            (cons (car set)
+                                  (I (cdr set))))
+                           (else (I (cdr set)))))))
+            (I set1))
+      )
+      )
+    (if (empty? (intersect list1 (car listOfList)))
+        (getCityList list1 (cdr listOfList))
+        (car listOfList)
+        )
+    )
   
   (messageToLog (message (current-date) "Usuario" msg))
 
+  (let ((wordsInMessage (string-split msg)))
+  
   (cond
     [(searchWordInList "nombre?" (string-split (list-ref (getLog "log.txt") (- (length (getLog "log.txt")) 2)))) (answerToName msg)]
     [(searchWordInList "llamarte?" (string-split (list-ref (getLog "log.txt") (- (length (getLog "log.txt")) 2)))) (answerToName msg)]
+    [(elementInCommon? wordsInMessage (flatten (chatbot-viajes chatbot))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed)]
     [else (noEntender chatbot seed)]
   )
+    )
   )
 
 

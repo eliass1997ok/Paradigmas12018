@@ -1,7 +1,7 @@
-[8-4-2018] 13:19:36 ID:0 BeginDialog
+[8-4-2018] 20:42:50 ID:0 BeginDialog
 
-[8-4-2018] 13:19:36 Bot: Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?
-[8-4-2018] 13:19:58 Usuario: Gabriel
-[8-4-2018] 13:19:58 Bot: Gabriel cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.
-[8-4-2018] 13:21:2 Usuario: Melipilla
-[8-4-2018] 13:21:2 Bot: Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?
+[8-4-2018] 20:42:50 Bot: Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?
+[8-4-2018] 20:43:13 Usuario: Gabriel
+[8-4-2018] 20:43:13 Bot: Gabriel cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.
+[8-4-2018] 20:43:42 Usuario: Me gustaría viajar un par de días a la ciudad de Valparaíso
+[8-4-2018] 20:43:42 Bot: ¡Es la mejor elección que pudiste elegir! Valparaíso es un lugar precioso! Los pasajes hacia allá cuestan 2000
