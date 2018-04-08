@@ -22,16 +22,19 @@
    saludosMañana ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
    saludosTarde  ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
    saludosNoche  ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
+   ofrecerNombre ;Lista en la que se tendrán los primeros diálogos para respuestas tras el nombre
+   noEntender    ;Lista en la que se tendrán las respuestas en caso de que el bot no entienda el flujo de conversación
    viajes ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
    rate   ;Nota o evaluación del bot
+   ID     ;Identificador del bot
    )
   )
 
 ;CARGAR LOG. SE UTILIZARÁ PARA EVALUAR DIALOGOS.
-(define getLog
-  (if (not (file-exists? filename))
+(define (getLog fileName)
+  (if (not (file-exists? fileName))
       '()
-      (file->lines filename)
+      (file->lines fileName)
       )
   )
 
@@ -53,17 +56,67 @@
     "Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?")
   '("Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?"
     "Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?")
+  '(" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país."
+    " ¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."
+    " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año.")
+  '("Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?"
+    "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?")
   '('('Valparaíso . 5000) '('Punta Arenas . 3000))
   5
+  0
   )
   )
+
 
 (define (beginDialog chatbot log seed)
-  ;(define rate)
+  (define (beginDialogTag filename date chatbot)
+    (let ((file (open-output-file filename #:exists 'append)))
+    (display (string-append
+              "["
+              (number->string (date-day date)) "-"
+              (number->string (date-month date)) "-"
+              (number->string (date-year date)) "] "
+              (number->string (date-hour date)) ":"
+              (number->string (date-minute date)) ":"
+              (number->string (date-second date)) " ID:"
+              (number->string (chatbot-ID chatbot)) 
+              " BeginDialog\n\n") file)
+    (close-output-port file))
+    )
+  (beginDialogTag "log.txt" (current-date) chatbot)
   (display (randomElement ((selectGreetings chatbot) chatbot) seed))
-  (messageToLog (message (current-date) "Bot" (randomElement ((selectGreetings chatbot) chatbot) seed)))
+  (messageToLog (message (current-date) "Bot" (randomElement ((selectGreetings chatbot) chatbot) seed))) 
   )
 
+;Recursión de cola
+(define (searchWordInList word list)
+  (if (empty? list)
+      #f
+      (if (string=? (car list) word)
+          #t
+          (searchWordInList word (cdr list))
+          )
+      )
+  )
+
+(define (sendMessage msg chatbot log seed)
+  (define (answerToName nombre)
+    (display (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed)))
+    (messageToLog (message (current-date) "Bot" (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed))))
+    )
+  (define (noEntender chatbot seed)
+    (display (randomElement (chatbot-noEntender chatbot) seed))
+    (messageToLog (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))
+    )
+  
+  (messageToLog (message (current-date) "Usuario" msg))
+
+  (cond
+    [(searchWordInList "nombre?" (string-split (list-ref (getLog "log.txt") (- (length (getLog "log.txt")) 2)))) (answerToName msg)]
+    [(searchWordInList "llamarte?" (string-split (list-ref (getLog "log.txt") (- (length (getLog "log.txt")) 2)))) (answerToName msg)]
+    [else (noEntender chatbot seed)]
+  )
+  )
 
 
 

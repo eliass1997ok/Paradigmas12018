@@ -1,1 +1,7 @@
-[7-4-2018] 20:9:2 Bot: Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?
+[8-4-2018] 13:19:36 ID:0 BeginDialog
+
+[8-4-2018] 13:19:36 Bot: Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?
+[8-4-2018] 13:19:58 Usuario: Gabriel
+[8-4-2018] 13:19:58 Bot: Gabriel cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.
+[8-4-2018] 13:21:2 Usuario: Melipilla
+[8-4-2018] 13:21:2 Bot: Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?
