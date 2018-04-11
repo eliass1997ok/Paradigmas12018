@@ -26,20 +26,11 @@
    respuestaViaje1 ;Lista en la que se tendrán  los inicios a una respuesta tras identificar el viaje
    respuestaViaje2 ;Continuación de respuesta, la que permite saber el precio
    viajes ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
+   despedida     ;Lista en la que se contendrán los distintos tipos de despedidas que puede generar el bot.
    rate   ;Nota o evaluación del bot
    ID     ;Identificador del bot
    )
   )
-
-;(define (compareAndFindCity city list)
-;    (if (empty? list)
-;      #f
-;      (if (string=? (caar list) city)
-;          #t
-;          (compareAndFindCity city (cdr list))
-;          )
-;      )
-;  )
 
 ;Recursión de Cola
 
@@ -70,6 +61,8 @@
   '(" es un lugar precioso! Los pasajes hacia allá cuestan "
     " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
   (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
+  '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
+    "Hasta la próxima, espero haberte ayudado.")
   5
   0
   )
@@ -90,6 +83,36 @@
           )
   )
 
+
+(define (endDialog chatbot log seed)
+  (define (endDialogTag date chatbot)
+    (list (string-append
+              "["
+              (number->string (date-day date)) "-"
+              (number->string (date-month date)) "-"
+              (number->string (date-year date)) "] "
+              (number->string (date-hour date)) ":"
+              (number->string (date-minute date)) ":"
+              (number->string (date-second date)) " ID:"
+              (number->string (chatbot-ID chatbot)) 
+              " EndDialog"))
+    )
+  (define (lastMessage message)
+    (list (string-append
+              "["
+              (number->string (date-day (getDate message))) "-"
+              (number->string (date-month (getDate message))) "-"
+              (number->string (date-year (getDate message))) "] "
+              (number->string (date-hour (getDate message))) ":"
+              (number->string (date-minute (getDate message))) ":"
+              (number->string (date-second (getDate message))) " " (getAutor message) " "
+              (getText message)
+              )
+              )
+    )
+  (append log (lastMessage (message (current-date) "Bot:" (randomElement (chatbot-despedida chatbot) seed))) (endDialogTag (current-date) chatbot))
+  )
+  
 
 (define (beginDialog chatbot log seed)
   (define (beginDialogTag date chatbot )
