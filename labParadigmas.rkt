@@ -9,7 +9,6 @@
 ;Se establece una constante que almacena una lista con la hora exacta en que el chat comienza.
 (define beginTime (list (date-hour time) (date-minute time) (date-second time)))
 
-(define filename "log.txt")
 ;Estas constantes fueron sacadas de https://en.wikipedia.org/wiki/Linear_congruential_generator
 (define a 1103515245)
 (define c 12345)
@@ -30,14 +29,6 @@
    rate   ;Nota o evaluación del bot
    ID     ;Identificador del bot
    )
-  )
-
-;CARGAR LOG. SE UTILIZARÁ PARA EVALUAR DIALOGOS.
-(define (getLog fileName)
-  (if (not (file-exists? fileName))
-      '()
-      (file->lines fileName)
-      )
   )
 
 ;(define (compareAndFindCity city list)
@@ -84,6 +75,21 @@
   )
   )
 
+(define (messageToLog log message)
+  (append log (list (string-append
+              "["
+              (number->string (date-day (getDate message))) "-"
+              (number->string (date-month (getDate message))) "-"
+              (number->string (date-year (getDate message))) "] "
+              (number->string (date-hour (getDate message))) ":"
+              (number->string (date-minute (getDate message))) ":"
+              (number->string (date-second (getDate message))) " " (getAutor message) ": "
+              (getText message)
+              )
+              )
+          )
+  )
+
 
 (define (beginDialog chatbot log seed)
   (define (beginDialogTag date chatbot )
@@ -106,13 +112,12 @@
               (number->string (date-year (getDate message))) "] "
               (number->string (date-hour (getDate message))) ":"
               (number->string (date-minute (getDate message))) ":"
-              (number->string (date-second (getDate message))) (getAutor message)
+              (number->string (date-second (getDate message))) " " (getAutor message) " "
               (getText message)
               )
               )
     )
     
-  ;(display (randomElement ((selectGreetings chatbot) chatbot) seed))
   (append log (beginDialogTag (current-date) chatbot) (firstMessage (message (current-date) "Bot:" (randomElement ((selectGreetings chatbot) chatbot) seed))))
   )
 
@@ -135,17 +140,17 @@
     [else (elementInCommon? (cdr list1) list2)]
     )
   )
-  (define (answerToName nombre)
-    (display (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed)))
-    (messageToLog (message (current-date) "Bot" (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed))))
+  (define (answerToName nombre log)
+    ;(display (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed)))
+    (messageToLog log (message (current-date) "Bot" (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed))))
     )
-  (define (noEntender chatbot seed)
-    (display (randomElement (chatbot-noEntender chatbot) seed))
+  (define (noEntender chatbot seed log)
+    ;(display (randomElement (chatbot-noEntender chatbot) seed))
     (messageToLog (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))
     )
-  (define (answerToCity pair chatbot seed)
-    (display (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair)))
-    (messageToLog (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair))))
+  (define (answerToCity pair chatbot seed log)
+    ;(display (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair)))
+    (messageToLog log (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair))))
     )
   
   (define (getCityList list1 listOfList)
@@ -168,14 +173,14 @@
         )
     )
   
-  (messageToLog (message (current-date) "Usuario" msg))
+  
 
   (let ((wordsInMessage (string-split msg)))
   
   (cond
-    [(searchWordInList "nombre?" (string-split (list-ref (getLog "log.txt") (- (length (getLog "log.txt")) 2)))) (answerToName msg)]
-    [(searchWordInList "llamarte?" (string-split (list-ref (getLog "log.txt") (- (length (getLog "log.txt")) 2)))) (answerToName msg)]
-    [(elementInCommon? wordsInMessage (flatten (chatbot-viajes chatbot))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed)]
+    [(searchWordInList "nombre?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
+    [(searchWordInList "llamarte?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
+    [(elementInCommon? wordsInMessage (flatten (chatbot-viajes chatbot))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
     [else (noEntender chatbot seed)]
   )
     )
@@ -258,23 +263,7 @@
       )
   )
 
-;FUNCIONES QUE OPERAN SOBRE EL TDA
-
-(define (messageToLog message)
-  (let ((file (open-output-file filename #:exists 'append)))
-    (display (string-append
-              "["
-              (number->string (date-day (getDate message))) "-"
-              (number->string (date-month (getDate message))) "-"
-              (number->string (date-year (getDate message))) "] "
-              (number->string (date-hour (getDate message))) ":"
-              (number->string (date-minute (getDate message))) ":"
-              (number->string (date-second (getDate message))) " "
-              (getAutor message) ": "
-              (getText message) "\n") file)
-  (close-output-port file))
-  )
-    
+;FUNCIONES QUE OPERAN SOBRE EL TDA    
   
   
 ;Esta función random tuma un xn y obtiene el xn+1 de la secuencia de números aleatorios.
