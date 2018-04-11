@@ -86,9 +86,8 @@
 
 
 (define (beginDialog chatbot log seed)
-  (define (beginDialogTag filename date chatbot)
-    (let ((file (open-output-file filename #:exists 'append)))
-    (display (string-append
+  (define (beginDialogTag date chatbot )
+    (list (string-append
               "["
               (number->string (date-day date)) "-"
               (number->string (date-month date)) "-"
@@ -97,12 +96,24 @@
               (number->string (date-minute date)) ":"
               (number->string (date-second date)) " ID:"
               (number->string (chatbot-ID chatbot)) 
-              " BeginDialog\n\n") file)
-    (close-output-port file))
+              " BeginDialog"))
     )
-  (beginDialogTag "log.txt" (current-date) chatbot)
-  (display (randomElement ((selectGreetings chatbot) chatbot) seed))
-  (messageToLog (message (current-date) "Bot" (randomElement ((selectGreetings chatbot) chatbot) seed))) 
+  (define (firstMessage message)
+    (list (string-append
+              "["
+              (number->string (date-day (getDate message))) "-"
+              (number->string (date-month (getDate message))) "-"
+              (number->string (date-year (getDate message))) "] "
+              (number->string (date-hour (getDate message))) ":"
+              (number->string (date-minute (getDate message))) ":"
+              (number->string (date-second (getDate message))) (getAutor message)
+              (getText message)
+              )
+              )
+    )
+    
+  ;(display (randomElement ((selectGreetings chatbot) chatbot) seed))
+  (append log (beginDialogTag (current-date) chatbot) (firstMessage (message (current-date) "Bot:" (randomElement ((selectGreetings chatbot) chatbot) seed))))
   )
 
 ;Recursión de cola
