@@ -26,6 +26,8 @@
    respuestaViaje1 ;Lista en la que se tendrán  los inicios a una respuesta tras identificar el viaje
    respuestaViaje2 ;Continuación de respuesta, la que permite saber el precio
    viajes ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
+   promise ;Lista de respuestas/promesas
+   lazyAnswer ;Lista de respuestas/promesas
    despedida     ;Lista en la que se contendrán los distintos tipos de despedidas que puede generar el bot.
    rate   ;Nota o evaluación del bot
    ID     ;Identificador del bot
@@ -61,6 +63,10 @@
   '(" es un lugar precioso! Los pasajes hacia allá cuestan "
     " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
   (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
+  '("Consultaré con mis superiores, te responderé en unos minutos."
+    "Voy a averigüarlo. Te respondo en un momento.")
+  '("A la pregunta que me habías hecho, el servicio comenzará en un tiempo estimado de 6 meses."
+    "A la pregunta que me habías hecho, el servicio se encontrará disponible desde el próximo verano.")
   '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
     "Hasta la próxima, espero haberte ayudado.")
   5
@@ -164,16 +170,27 @@
     )
   )
   (define (answerToName nombre log)
-    ;(display (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed)))
     (messageToLog log (message (current-date) "Bot" (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed))))
     )
   (define (noEntender chatbot seed log)
-    ;(display (randomElement (chatbot-noEntender chatbot) seed))
-    (messageToLog (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))
+    (messageToLog log (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))
     )
   (define (answerToCity pair chatbot seed log)
-    ;(display (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair)))
     (messageToLog log (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair))))
+    )
+  (define (lazyAnswer msg chatbot seed log)
+    (let ((preLog (messageToLog log (message (current-date) "Usuario" msg))))
+      (append (messageToLog preLog (message (current-date) "Bot" (randomElement (chatbot-promise chatbot) seed))) (list (lazy (message (current-date) "Bot" (randomElement (chatbot-lazyAnswer chatbot) seed)))))
+      )
+    )
+  (define (answerPromises log)
+    (if (empty? log)
+        '()
+        (if (and (promise? (car log)) (not (promise-forced? (car log))))
+            (force (car log))
+            (answerPromises (cdr log))
+            )
+        )
     )
   
   (define (getCityList list1 listOfList)
@@ -199,14 +216,20 @@
   
 
   (let ((wordsInMessage (string-split msg)))
-  
-  (cond
-    [(searchWordInList "nombre?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
-    [(searchWordInList "llamarte?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
-    [(elementInCommon? wordsInMessage (flatten (chatbot-viajes chatbot))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
-    [else (noEntender chatbot seed)]
-  )
+  (if (string? (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))
+      (cond
+        [(searchWordInList "nombre?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(searchWordInList "llamarte?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(elementInCommon? wordsInMessage (flatten (chatbot-viajes chatbot))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(searchWordInList "¿Cuándo" wordsInMessage) (lazyAnswer msg chatbot seed log)]
+        [(or (searchWordInList "Respóndeme" wordsInMessage) (searchWordInList "responderme" wordsInMessage)) (answerPromises log)]
+        [else (noEntender chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        )
+      (cond
+        [(or (searchWordInList "Respóndeme" wordsInMessage) (searchWordInList "responderme" wordsInMessage)) (filter (lambda (x) (not (promise? x))) (messageToLog (messageToLog log (message (current-date) "Usuario" msg)) (answerPromises log)))]
+        )
     )
+  )
   )
 
 
