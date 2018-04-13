@@ -26,6 +26,8 @@
    respuestaViaje1 ;Lista en la que se tendrán  los inicios a una respuesta tras identificar el viaje
    respuestaViaje2 ;Continuación de respuesta, la que permite saber el precio
    viajes ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
+   confirmacion ;Lista que contiene respuestas para confirmación de pasajes
+   nuevaBusqueda ;Lista en la que se tendrán las posibilidades de realizar una nueva búsqueda.
    promise ;Lista de respuestas/promesas
    lazyAnswer ;Lista de respuestas/promesas
    despedida     ;Lista en la que se contendrán los distintos tipos de despedidas que puede generar el bot.
@@ -46,6 +48,7 @@
   )
   )
 
+
 (define test-chatbot (make-chatbot
   '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
     "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
@@ -63,6 +66,10 @@
   '(" es un lugar precioso! Los pasajes hacia allá cuestan "
     " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
   (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
+  '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
+    "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
+  '("¿A qué ciudad entonces te gustaría ir?"
+    "No hay problema, puedes elegir un nuevo destino")
   '("Consultaré con mis superiores, te responderé en unos minutos."
     "Voy a averigüarlo. Te respondo en un momento.")
   '("A la pregunta que me habías hecho, el servicio comenzará en un tiempo estimado de 6 meses."
@@ -118,6 +125,7 @@
     )
   (append log (lastMessage (message (current-date) "Bot:" (randomElement (chatbot-despedida chatbot) seed))) (endDialogTag (current-date) chatbot))
   )
+
   
 
 (define (beginDialog chatbot log seed)
@@ -176,7 +184,13 @@
     (messageToLog log (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))
     )
   (define (answerToCity pair chatbot seed log)
-    (messageToLog log (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair))))
+    (messageToLog log (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair) " ¿Desea confirmar esa ciudad?")))
+    )
+  (define (confirmTicket chatbot seed log)
+    (messageToLog log (message (current-date) "Bot" (randomElement (chatbot-confirmacion chatbot) seed)))
+    )
+  (define (nuevoDestino chatbot seed log)
+    (messageToLog log (message (current-date) "Bot" (randomElement (chatbot-nuevaBusqueda chatbot) seed)))
     )
   (define (lazyAnswer msg chatbot seed log)
     (let ((preLog (messageToLog log (message (current-date) "Usuario" msg))))
@@ -207,7 +221,7 @@
             (I set1))
       )
       )
-    (if (empty? (intersect list1 (car listOfList)))
+    (if (empty? (intersect list1 (string-split (caar listOfList))))
         (getCityList list1 (cdr listOfList))
         (car listOfList)
         )
@@ -216,13 +230,13 @@
   
 
   (let ((wordsInMessage (string-split msg)))
-  (if (string? (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))
+   (if (string? (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))
       (cond
-        [(searchWordInList "nombre?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
-        [(searchWordInList "llamarte?" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
-        [(elementInCommon? wordsInMessage (flatten (chatbot-viajes chatbot))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(searchWordInList "BeginDialog" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 3)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(elementInCommon? wordsInMessage (flatten (map (lambda (x) (string-split (car x))) (chatbot-viajes chatbot)))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
         [(searchWordInList "¿Cuándo" wordsInMessage) (lazyAnswer msg chatbot seed log)]
-        [(or (searchWordInList "Respóndeme" wordsInMessage) (searchWordInList "responderme" wordsInMessage)) (answerPromises log)]
+        [(or (searchWordInList "Sí" wordsInMessage) (searchWordInList "sí" wordsInMessage)) (confirmTicket chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(or (searchWordInList "No" wordsInMessage) (searchWordInList "no" wordsInMessage)) (nuevoDestino chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
         [else (noEntender chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
         )
       (cond
@@ -329,3 +343,12 @@
       )
     )
 
+  (define l1 (beginDialog test-chatbot '() 0))
+  (define l2 (sendMessage "Gabriel" test-chatbot l1 0))
+  (define l3 (sendMessage "¿Cuándo realizarán viajes a Quilicura?" test-chatbot l2 0))
+  (define l4 (sendMessage "Respóndeme lo que te pregunté" test-chatbot l3 0))
+  (define l5 (sendMessage "Tengo ganas de ir a Valparaíso" test-chatbot l4 0))
+  (define l6 (sendMessage "hmm mejor que no" test-chatbot l5 0))
+  (define l7 (sendMessage "Prefiero tomar un viaje a Punta Arenas" test-chatbot l6 0))
+  (define l8 (sendMessage "Sí, este sí" test-chatbot l7 0))
+  (define l9 (endDialog test-chatbot l8 0))
