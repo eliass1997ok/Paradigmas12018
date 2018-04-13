@@ -3,12 +3,6 @@
 ;Importación de librería para acceder a la hora del sistema
 (require racket/date)
 
-;Se guarda la hora y fecha del sistema dentro de la constante "time"
-(define time (current-date))
-
-;Se establece una constante que almacena una lista con la hora exacta en que el chat comienza.
-(define beginTime (list (date-hour time) (date-minute time) (date-second time)))
-
 ;Estas constantes fueron sacadas de https://en.wikipedia.org/wiki/Linear_congruential_generator
 (define a 1103515245)
 (define c 12345)
@@ -325,7 +319,16 @@
 
 ;FUNCIONES QUE OPERAN SOBRE EL TDA    
   
-  
+(define (test user chatbot log seed)
+  (define (recursiveLog user chatbot log seed)
+    (if (empty? user)
+        (endDialog chatbot log seed)
+        (recursiveLog (cdr user) chatbot (sendMessage (car user) chatbot log seed) seed)
+        )
+    )
+  (recursiveLog user chatbot (beginDialog chatbot log seed) seed)
+  )
+
 ;Esta función random tuma un xn y obtiene el xn+1 de la secuencia de números aleatorios.
 (define (myRandom seed)
   (define myRandom
