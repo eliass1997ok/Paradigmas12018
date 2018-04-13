@@ -25,8 +25,7 @@
    promise ;Lista de respuestas/promesas
    lazyAnswer ;Lista de respuestas/promesas
    despedida     ;Lista en la que se contendrán los distintos tipos de despedidas que puede generar el bot.
-   rate   ;Nota o evaluación del bot
-   ID     ;Identificador del bot
+   pairID/Rate   ;Lista de pares en las que se tendrá el id y su respectivo rate del bot
    )
   )
 
@@ -41,8 +40,66 @@
     )
   )
   )
+;Recursion de pila
+(define (myLength list)
+  (if (empty? list)
+       0
+       (+ 1 (myLength (cdr list)))
+     )
+   )
 
+(define (autoRate log)
+  (let ((largo (myLength log)))
+    (cond
+      ((< largo 5) 0)
+      ((and (< largo 10) (> largo 4) ) 1)
+      ((and (< largo 15) (>= largo 10)) 5)
+      ((and (< largo 17) (>= largo 15)) 4)
+      ((and (< largo 20) (>= largo 17)) 3)
+      ((and (< largo 23) (>= largo 20)) 2)
+      (else 1)
+      )
+    )
+  )
 
+(define (rate chatbot score f log)
+  (define (getScore userScore autoScore)
+    (+ (* userScore 0.7) (* autoScore 0.3))
+    )
+  (if (searchWordInList "EndDialog" (string-split (last log)))
+      (make-chatbot
+       '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
+         "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
+       '("Buenas tardes, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"
+         "Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?")
+       '("Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?"
+         "Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?")
+       '(" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país."
+         " ¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."
+         " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año.")
+       '("Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?"
+         "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?")
+       '("¡Es la mejor elección que pudiste elegir! "
+         "¡Excelente elección! ")
+       '(" es un lugar precioso! Los pasajes hacia allá cuestan "
+         " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
+       (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
+       '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
+         "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
+       '("¿A qué ciudad entonces te gustaría ir?"
+         "No hay problema, puedes elegir un nuevo destino")
+       '("Consultaré con mis superiores, te responderé en unos minutos."
+         "Voy a averigüarlo. Te respondo en un momento.")
+       '("A la pregunta que me habías hecho, el servicio comenzará en un tiempo estimado de 6 meses."
+         "A la pregunta que me habías hecho, el servicio se encontrará disponible desde el próximo verano.")
+       '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
+         "Hasta la próxima, espero haberte ayudado.")
+       (append (chatbot-pairID/Rate chatbot) (list (list (+ 1 (first (last (chatbot-pairID/Rate chatbot)))) (inexact->exact (round (getScore score (f log)))))))
+       )
+      chatbot
+      )
+  )
+  
 (define test-chatbot (make-chatbot
   '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
     "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
@@ -70,8 +127,7 @@
     "A la pregunta que me habías hecho, el servicio se encontrará disponible desde el próximo verano.")
   '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
     "Hasta la próxima, espero haberte ayudado.")
-  5
-  0
+  (list (list 0 0))
   )
   )
 
@@ -101,7 +157,7 @@
               (number->string (date-hour date)) ":"
               (number->string (date-minute date)) ":"
               (number->string (date-second date)) " ID:"
-              (number->string (chatbot-ID chatbot)) 
+              (number->string (first (last (chatbot-pairID/Rate chatbot)))) 
               " EndDialog"))
     )
   (define (lastMessage message)
@@ -132,7 +188,7 @@
               (number->string (date-hour date)) ":"
               (number->string (date-minute date)) ":"
               (number->string (date-second date)) " ID:"
-              (number->string (chatbot-ID chatbot)) 
+              (number->string (first (last (chatbot-pairID/Rate chatbot)))) 
               " BeginDialog"))
     )
   (define (firstMessage message)
@@ -224,24 +280,17 @@
   
 
   (let ((wordsInMessage (string-split msg)))
-   (if (string? (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 2)))
       (cond
-        [(searchWordInList "BeginDialog" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (length (messageToLog log (message (current-date) "Usuario" msg))) 3)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(searchWordInList "BeginDialog" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (myLength (messageToLog log (message (current-date) "Usuario" msg))) 3)))) (answerToName msg (messageToLog log (message (current-date) "Usuario" msg)))]
         [(elementInCommon? wordsInMessage (flatten (map (lambda (x) (string-split (car x))) (chatbot-viajes chatbot)))) (answerToCity (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
         [(searchWordInList "¿Cuándo" wordsInMessage) (lazyAnswer msg chatbot seed log)]
         [(or (searchWordInList "Sí" wordsInMessage) (searchWordInList "sí" wordsInMessage)) (confirmTicket chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
         [(or (searchWordInList "No" wordsInMessage) (searchWordInList "no" wordsInMessage)) (nuevoDestino chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
-        [else (noEntender chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
-        )
-      (cond
         [(or (searchWordInList "Respóndeme" wordsInMessage) (searchWordInList "responderme" wordsInMessage)) (filter (lambda (x) (not (promise? x))) (messageToLog (messageToLog log (message (current-date) "Usuario" msg)) (answerPromises log)))]
+        [else (noEntender chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
         )
     )
   )
-  )
-
-
-
                           
 ;CONSTRUCTOR
 (define (message date autor text)
@@ -256,7 +305,7 @@
   (if (list? m)
       (if (empty? m)
           #f
-          (if (= (length m) 3)
+          (if (= (myLength m) 3)
               (if (and (date*? (car m))
                        (string? (cadr m))
                        (string? (caddr m))
@@ -342,14 +391,14 @@
 
 (define randomElement
   (lambda (ls seed)
-      (list-ref ls (remainder (myRandom seed) (length ls)))
+      (list-ref ls (remainder (myRandom seed) (myLength ls)))
       )
     )
 
   (define l1 (beginDialog test-chatbot '() 0))
   (define l2 (sendMessage "Gabriel" test-chatbot l1 0))
   (define l3 (sendMessage "¿Cuándo realizarán viajes a Quilicura?" test-chatbot l2 0))
-  (define l4 (sendMessage "Respóndeme lo que te pregunté" test-chatbot l3 0))
+  (define l4 (sendMessage "Respóndeme" test-chatbot l3 0))
   (define l5 (sendMessage "Tengo ganas de ir a Valparaíso" test-chatbot l4 0))
   (define l6 (sendMessage "hmm mejor que no" test-chatbot l5 0))
   (define l7 (sendMessage "Prefiero tomar un viaje a Punta Arenas" test-chatbot l6 0))
