@@ -32,59 +32,185 @@
   )
 
 ;;
-; Función que permite obtener el largo de una lista.
-; 
-; Entrada:
-;     list -> Lista
-;
-; Salida:
-;     Número entero que representa el largo de la lista.
-;
-; Recursividad:
-;     En esta implementación, se ha utilizado recursión NATURAL. Se ha decidido utilizar esta recursión para
-; obtener un cálculo directo, sin tener que recurrir a argumentos auxiliares dentro de la función, ni tampoco
-; a encapsular funciones.
-;
-(define (myLength list)
-  (if (empty? list)
-       0
-       (+ 1 (myLength (cdr list)))
-     )
-   )
+;##################################################################################################################
+;############################################# FUNCIONES OBLIGATORIAS #############################################
+;##################################################################################################################
+;;
 
-; Función que permite obtener el largo de la última conversación dentro de un log.
-; 
+;;
+; Función que permite iniciar una conversación con un chatbot.
+;
 ; Entrada:
-;     list -> Lista que representa al log.
+;     chatbot -> corresponde al chatbot con el que se tendrá la conversación.
+;     log -> corresponde a una lista de strings, siendo esta la representación del log histórico de conversaciones.
+;     seed -> corresponde a un número entero (o semilla), con el cual se generarán número pseudo-aleatorios.
 ;
 ; Salida:
-;     Número entero que representa el largo de la última conversación dentro del log.
+;     Lista de strings, representando a un log actualizado en el que se mantienen las conversaciones del usuario y un chatbot.
 ;
-; Recursividad:
-;     En esta implementación, se ha utilizado recursión NATURAL. Se ha decidido utilizar esta recursión para
-; obtener un cálculo directo, sin tener que recurrir a argumentos auxiliares dentro de la función, ni tampoco
-; a encapsular funciones.
-(define (lengthToRate reverseList)
-  (if (searchWordInList "BeginDialog" (string-split (car reverseList)))
-      0
-      (+ 1 (lengthToRate (cdr reverseList)))
-      )
+(define (beginDialog chatbot log seed)    
+  (append log
+          ((lambda (date chatbot)
+             (list (string-append
+              "["
+              (number->string (date-day date)) "-"
+              (number->string (date-month date)) "-"
+              (number->string (date-year date)) "] "
+              (number->string (date-hour date)) ":"
+              (number->string (date-minute date)) ":"
+              (number->string (date-second date)) " ID:"
+              (number->string (first (last (chatbot-pairID/Rate chatbot)))) 
+              " BeginDialog"))
+    ) (current-date) chatbot)
+          ((lambda (message)
+             (list (string-append
+                    "["
+                    (number->string (date-day (getDate message))) "-"
+                    (number->string (date-month (getDate message))) "-"
+                    (number->string (date-year (getDate message))) "] "
+                    (number->string (date-hour (getDate message))) ":"
+                    (number->string (date-minute (getDate message))) ":"
+                    (number->string (date-second (getDate message))) " " (getAutor message) " "
+                    (getText message)
+                    )
+                   )
+    )
+           (message (current-date) "Bot:"
+              (randomElement (((lambda (chatbot)
+                                 (let ((hour (date-hour (current-date))))
+                                   (cond
+                                     [(< hour 12) chatbot-saludosMañana]
+                                     [(and (>= hour 12) (< hour 20)) chatbot-saludosTarde]
+                                     [else chatbot-saludosNoche]
+                                     )
+                                   )
+                                 )
+                               chatbot)
+                              chatbot)
+                             seed)
+              )
+           )
+          )
   )
 
-(define (autoRate log)
-  (let ((largo (lengthToRate (reverse log))))
-    (cond
-      ((< largo 5) 0)
-      ((and (< largo 10) (> largo 4) ) 1)
-      ((and (< largo 15) (>= largo 10)) 5)
-      ((and (< largo 17) (>= largo 15)) 4)
-      ((and (< largo 20) (>= largo 17)) 3)
-      ((and (< largo 23) (>= largo 20)) 2)
-      (else 1)
+;;
+; Función que permite enviar un mensaje a un chatbot.
+; Entrada:
+;     msg -> String ingresado por el usuario. Corresponde a su mensaje hacia el chatbot.
+;     chatbot -> corresponde al chatbot con el que se mantiene una conversación.
+;     log -> corresponde a una lista de strings, siendo esta la representación del log histórico de conversaciones.
+;     seed -> corresponde a un número entero (o semilla), con el cual se generarán número pseudo-aleatorios.
+;
+; Salida:
+;     Lista de strings, representando a un log actualizado en el que se mantienen las conversaciones del usuario y un chatbot.
+;
+(define (sendMessage msg chatbot log seed)
+  (define (elementInCommon? list1 list2)
+  (cond
+    [(or (empty? list1) (empty? list2)) #f]
+    [(member (car list1) list2) #t]
+    [else (elementInCommon? (cdr list1) list2)]
+    )
+  )
+  (define (answerPromises log)
+    (if (empty? log)
+        '()
+        (if (and (promise? (car log)) (not (promise-forced? (car log))))
+            (force (car log))
+            (answerPromises (cdr log))
+            )
+        )
+    )
+  (define (getCityList list1 listOfList)
+    (define intersect
+    (lambda (set1 set2)
+            (letrec
+              ((I (lambda (set)
+                      (cond
+                           ((null? set) (quote ()))
+                           ((member (car set) set2)
+                            (cons (car set)
+                                  (I (cdr set))))
+                           (else (I (cdr set)))))))
+            (I set1))
       )
+      )
+    (if (empty? (intersect list1 (string-split (caar listOfList))))
+        (getCityList list1 (cdr listOfList))
+        (car listOfList)
+        )
+    )
+  
+  (let ((wordsInMessage (string-split msg)))
+      (cond
+        [(searchWordInList "BeginDialog" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (myLength (messageToLog log (message (current-date) "Usuario" msg))) 3)))) ((lambda (nombre log)(messageToLog log (message (current-date) "Bot" (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed))))) msg (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(elementInCommon? wordsInMessage (flatten (map (lambda (x) (string-split (car x))) (chatbot-viajes chatbot)))) ((lambda (pair chatbot seed log) (messageToLog log (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair) " ¿Desea confirmar esa ciudad?")))) (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(searchWordInList "¿Cuándo" wordsInMessage) ((lambda (msg chatbot seed log)(let ((preLog (messageToLog log (message (current-date) "Usuario" msg))))(append (messageToLog preLog (message (current-date) "Bot" (randomElement (chatbot-promise chatbot) seed))) (list (lazy (message (current-date) "Bot" (randomElement (chatbot-lazyAnswer chatbot) seed))))))) msg chatbot seed log)]
+        [(or (searchWordInList "Sí" wordsInMessage) (searchWordInList "sí" wordsInMessage)) ((lambda (chatbot seed log)(messageToLog log (message (current-date) "Bot" (randomElement (chatbot-confirmacion chatbot) seed)))) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(or (searchWordInList "No" wordsInMessage) (searchWordInList "no" wordsInMessage)) ((lambda (chatbot seed log)(messageToLog log (message (current-date) "Bot" (randomElement (chatbot-nuevaBusqueda chatbot) seed)))) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        [(or (searchWordInList "Respóndeme" wordsInMessage) (searchWordInList "responderme" wordsInMessage)) (filter (lambda (x) (not (promise? x))) (messageToLog (messageToLog log (message (current-date) "Usuario" msg)) (answerPromises log)))]
+        [else ((lambda (chatbot seed log) (messageToLog log (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
+        )
     )
   )
 
+;;
+; Función que permite finalizar una conversación con un chatbot.
+;
+; Entrada:
+;     chatbot -> corresponde al chatbot con el que se terminará la conversación.
+;     log -> corresponde a una lista de strings, siendo esta la representación del log histórico de conversaciones.
+;     seed -> corresponde a un número entero (o semilla), con el cual se generarán número pseudo-aleatorios.
+;
+; Salida:
+;     Lista de strings, representando a un log actualizado en el que se mantienen las conversaciones del usuario y un chatbot.
+;
+(define (endDialog chatbot log seed)
+  (append log
+          ((lambda (message)
+             (list (string-append
+                    "["
+                    (number->string (date-day (getDate message))) "-"
+                    (number->string (date-month (getDate message))) "-"
+                    (number->string (date-year (getDate message))) "] "
+                    (number->string (date-hour (getDate message))) ":"
+                    (number->string (date-minute (getDate message))) ":"
+                    (number->string (date-second (getDate message))) " " (getAutor message) " "
+                    (getText message)
+                    )
+                   )
+             )
+           (message (current-date) "Bot:"
+                    (randomElement (chatbot-despedida chatbot) seed)))
+          ((lambda (date chatbot)
+             (list (string-append
+                    "["
+                    (number->string (date-day date)) "-"
+                    (number->string (date-month date)) "-"
+                    (number->string (date-year date)) "] "
+                    (number->string (date-hour date)) ":"
+                    (number->string (date-minute date)) ":"
+                    (number->string (date-second date)) " ID:"
+                    (number->string (first (last (chatbot-pairID/Rate chatbot)))) 
+                    " EndDialog"))
+             )
+           (current-date) chatbot)
+          )
+  )
+
+;;
+; Función que permite evaluar a un chatbot en base a su conversación y a una nota dada por el usuario.
+;
+; Entrada:
+;     chatbot -> corresponde al chatbot a evaluar.
+;     score -> evaluación por parte del usuario hacia el bot.
+;     f -> función que permite realizar una autoevaluación del bot.
+;     log -> corresponde a una lista de strings, siendo esta la representación del log histórico de conversaciones.
+;
+; Salida:
+;     Estructura de tipo chatbot. En caso de que la conversación no haya terminado, esta función entrega al mismo chatbot, sin
+; aplicar una evaluación. En caso contrario, el chatbot se evalúa, y se entrega uno actualizado.
+;
 (define (rate chatbot score f log)
   (if (searchWordInList "EndDialog" (string-split (last log)))
       (make-chatbot
@@ -141,194 +267,40 @@
       chatbot
       )
   )
-  
-(define test-chatbot (make-chatbot
-  '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
-    "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
-  '("Buenas tardes, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"
-    "Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?")
-  '("Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?"
-    "Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?")
-  '(" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país."
-    " ¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."
-    " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año.")
-  '("Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?"
-    "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?")
-  '("¡Es la mejor elección que pudiste elegir! "
-    "¡Excelente elección! ")
-  '(" es un lugar precioso! Los pasajes hacia allá cuestan "
-    " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
-  (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
-  '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
-    "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
-  '("¿A qué ciudad entonces te gustaría ir?"
-    "No hay problema, puedes elegir un nuevo destino")
-  '("Consultaré con mis superiores, te responderé en unos minutos."
-    "Voy a averigüarlo. Te respondo en un momento.")
-  '("A la pregunta que me habías hecho, el servicio comenzará en un tiempo estimado de 6 meses."
-    "A la pregunta que me habías hecho, el servicio se encontrará disponible desde el próximo verano.")
-  '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
-    "Hasta la próxima, espero haberte ayudado.")
-  (list (list 0 0))
-  )
-  )
 
-(define (messageToLog log message)
-  (append log (list (string-append
-              "["
-              (number->string (date-day (getDate message))) "-"
-              (number->string (date-month (getDate message))) "-"
-              (number->string (date-year (getDate message))) "] "
-              (number->string (date-hour (getDate message))) ":"
-              (number->string (date-minute (getDate message))) ":"
-              (number->string (date-second (getDate message))) " " (getAutor message) ": "
-              (getText message)
-              )
-              )
-          )
-  )
-
-
-(define (endDialog chatbot log seed)
-  (append log
-          ((lambda (message)
-             (list (string-append
-                    "["
-                    (number->string (date-day (getDate message))) "-"
-                    (number->string (date-month (getDate message))) "-"
-                    (number->string (date-year (getDate message))) "] "
-                    (number->string (date-hour (getDate message))) ":"
-                    (number->string (date-minute (getDate message))) ":"
-                    (number->string (date-second (getDate message))) " " (getAutor message) " "
-                    (getText message)
-                    )
-                   )
-             )
-           (message (current-date) "Bot:"
-                    (randomElement (chatbot-despedida chatbot) seed)))
-          ((lambda (date chatbot)
-             (list (string-append
-                    "["
-                    (number->string (date-day date)) "-"
-                    (number->string (date-month date)) "-"
-                    (number->string (date-year date)) "] "
-                    (number->string (date-hour date)) ":"
-                    (number->string (date-minute date)) ":"
-                    (number->string (date-second date)) " ID:"
-                    (number->string (first (last (chatbot-pairID/Rate chatbot)))) 
-                    " EndDialog"))
-             )
-           (current-date) chatbot)
-          )
-  )
-  
-
-(define (beginDialog chatbot log seed)    
-  (append log
-          ((lambda (date chatbot)
-             (list (string-append
-              "["
-              (number->string (date-day date)) "-"
-              (number->string (date-month date)) "-"
-              (number->string (date-year date)) "] "
-              (number->string (date-hour date)) ":"
-              (number->string (date-minute date)) ":"
-              (number->string (date-second date)) " ID:"
-              (number->string (first (last (chatbot-pairID/Rate chatbot)))) 
-              " BeginDialog"))
-    ) (current-date) chatbot)
-          ((lambda (message)
-             (list (string-append
-                    "["
-                    (number->string (date-day (getDate message))) "-"
-                    (number->string (date-month (getDate message))) "-"
-                    (number->string (date-year (getDate message))) "] "
-                    (number->string (date-hour (getDate message))) ":"
-                    (number->string (date-minute (getDate message))) ":"
-                    (number->string (date-second (getDate message))) " " (getAutor message) " "
-                    (getText message)
-                    )
-                   )
-    )
-           (message (current-date) "Bot:"
-              (randomElement (((lambda (chatbot)
-                                 (let ((hour (date-hour (current-date))))
-                                   (cond
-                                     [(< hour 12) chatbot-saludosMañana]
-                                     [(and (>= hour 12) (< hour 20)) chatbot-saludosTarde]
-                                     [else chatbot-saludosNoche]
-                                     )
-                                   )
-                                 )
-                               chatbot)
-                              chatbot)
-                             seed)
-              )
-           )
-          )
-  )
-
-;Recursión de cola
-(define (searchWordInList word list)
-  (if (empty? list)
-      #f
-      (if (string=? (car list) word)
-          #t
-          (searchWordInList word (cdr list))
-          )
-      )
-  )
-
-(define (sendMessage msg chatbot log seed)
-  (define (elementInCommon? list1 list2)
-  (cond
-    [(or (empty? list1) (empty? list2)) #f]
-    [(member (car list1) list2) #t]
-    [else (elementInCommon? (cdr list1) list2)]
-    )
-  )
-  (define (answerPromises log)
-    (if (empty? log)
-        '()
-        (if (and (promise? (car log)) (not (promise-forced? (car log))))
-            (force (car log))
-            (answerPromises (cdr log))
-            )
+;;
+; Función que permite simular una conversación a partir de una lista de strings.
+; 
+; Entrada:
+;     user -> Lista de strings que representan los mensajes del usuario.
+;     chatbot -> corresponde al chatbot con el cual se simulará la conversación.
+;     log -> corresponde a una lista de strings, siendo esta la representación del log histórico de conversaciones.
+;     seed -> corresponde a un número entero (o semilla), con el cual se generarán número pseudo-aleatorios.
+;
+; Salida:
+;     Lista de strings, que representa a un log modificado con el resultado de la conversación simulada.
+;
+; Recursividad:
+;     En esta implementación, se ha utilizado recursión de COLA. Se ha decidido utilizar esta recursión para
+; obtener un cálculo en el que no queden estados en espera, con el fin de reducir el tiempo necesario para
+; simular la conversación.
+;
+(define (test user chatbot log seed)
+  (define (recursiveLog user chatbot log seed)
+    (if (empty? user)
+        (endDialog chatbot log seed)
+        (recursiveLog (cdr user) chatbot (sendMessage (car user) chatbot log seed) seed)
         )
     )
-  (define (getCityList list1 listOfList)
-    (define intersect
-    (lambda (set1 set2)
-            (letrec
-              ((I (lambda (set)
-                      (cond
-                           ((null? set) (quote ()))
-                           ((member (car set) set2)
-                            (cons (car set)
-                                  (I (cdr set))))
-                           (else (I (cdr set)))))))
-            (I set1))
-      )
-      )
-    (if (empty? (intersect list1 (string-split (caar listOfList))))
-        (getCityList list1 (cdr listOfList))
-        (car listOfList)
-        )
-    )
-  
-  (let ((wordsInMessage (string-split msg)))
-      (cond
-        [(searchWordInList "BeginDialog" (string-split (list-ref (messageToLog log (message (current-date) "Usuario" msg)) (- (myLength (messageToLog log (message (current-date) "Usuario" msg))) 3)))) ((lambda (nombre log)(messageToLog log (message (current-date) "Bot" (string-append nombre (randomElement (chatbot-ofrecerNombre chatbot) seed))))) msg (messageToLog log (message (current-date) "Usuario" msg)))]
-        [(elementInCommon? wordsInMessage (flatten (map (lambda (x) (string-split (car x))) (chatbot-viajes chatbot)))) ((lambda (pair chatbot seed log) (messageToLog log (message (current-date) "Bot" (string-append (randomElement (chatbot-respuestaViaje1 chatbot) seed) (car pair) (randomElement (chatbot-respuestaViaje2 chatbot) seed) (cadr pair) " ¿Desea confirmar esa ciudad?")))) (getCityList wordsInMessage (chatbot-viajes chatbot)) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
-        [(searchWordInList "¿Cuándo" wordsInMessage) ((lambda (msg chatbot seed log)(let ((preLog (messageToLog log (message (current-date) "Usuario" msg))))(append (messageToLog preLog (message (current-date) "Bot" (randomElement (chatbot-promise chatbot) seed))) (list (lazy (message (current-date) "Bot" (randomElement (chatbot-lazyAnswer chatbot) seed))))))) msg chatbot seed log)]
-        [(or (searchWordInList "Sí" wordsInMessage) (searchWordInList "sí" wordsInMessage)) ((lambda (chatbot seed log)(messageToLog log (message (current-date) "Bot" (randomElement (chatbot-confirmacion chatbot) seed)))) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
-        [(or (searchWordInList "No" wordsInMessage) (searchWordInList "no" wordsInMessage)) ((lambda (chatbot seed log)(messageToLog log (message (current-date) "Bot" (randomElement (chatbot-nuevaBusqueda chatbot) seed)))) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
-        [(or (searchWordInList "Respóndeme" wordsInMessage) (searchWordInList "responderme" wordsInMessage)) (filter (lambda (x) (not (promise? x))) (messageToLog (messageToLog log (message (current-date) "Usuario" msg)) (answerPromises log)))]
-        [else ((lambda (chatbot seed log) (messageToLog log (message (current-date) "Bot" (randomElement (chatbot-noEntender chatbot) seed)))) chatbot seed (messageToLog log (message (current-date) "Usuario" msg)))]
-        )
-    )
+  (recursiveLog user chatbot (beginDialog chatbot log seed) seed)
   )
-                          
+
+;;
+;##################################################################################################################
+;############################################# TIPO DE DATO ABSTRACTO #############################################
+;##################################################################################################################
+;;
+
 ;CONSTRUCTOR
 (define (message date autor text)
   (if (and (date*? date) (string? autor) (string? text))
@@ -404,16 +376,129 @@
   )
 
 ;FUNCIONES QUE OPERAN SOBRE EL TDA    
-  
-(define (test user chatbot log seed)
-  (define (recursiveLog user chatbot log seed)
-    (if (empty? user)
-        (endDialog chatbot log seed)
-        (recursiveLog (cdr user) chatbot (sendMessage (car user) chatbot log seed) seed)
-        )
-    )
-  (recursiveLog user chatbot (beginDialog chatbot log seed) seed)
+
+;;
+; Función que permite obtener el largo de una lista.
+; 
+; Entrada:
+;     list -> Lista
+;
+; Salida:
+;     Número entero que representa el largo de la lista.
+;
+; Recursividad:
+;     En esta implementación, se ha utilizado recursión NATURAL. Se ha decidido utilizar esta recursión para
+; obtener un cálculo directo, sin tener que recurrir a argumentos auxiliares dentro de la función, ni tampoco
+; a encapsular funciones.
+;
+(define (myLength list)
+  (if (empty? list)
+       0
+       (+ 1 (myLength (cdr list)))
+     )
+   )
+
+;;
+; Función que permite obtener el largo de la última conversación dentro de un log.
+; 
+; Entrada:
+;     reverseList -> Lista que representa al log. Este viene invertido.
+;
+; Salida:
+;     Número entero que representa el largo de la última conversación dentro del log.
+;
+; Recursividad:
+;     En esta implementación, se ha utilizado recursión NATURAL. Se ha decidido utilizar esta recursión para
+; obtener un cálculo directo, sin tener que recurrir a argumentos auxiliares dentro de la función, ni tampoco
+; a encapsular funciones.
+;
+(define (lengthToRate reverseList)
+  (if (searchWordInList "BeginDialog" (string-split (car reverseList)))
+      0
+      (+ 1 (lengthToRate (cdr reverseList)))
+      )
   )
+;;
+; Función que permite determinar una nota para la última conversación a partir del largo de ésta.
+; 
+; Entrada:
+;     log -> Lista que representa al log.
+;
+; Salida:
+;     Número entero que representa la calificación de la última conversación en base a su largo.
+;
+(define (autoRate log)
+  (let ((largo (lengthToRate (reverse log))))
+    (cond
+      ((< largo 5) 0)
+      ((and (< largo 10) (> largo 4) ) 1)
+      ((and (< largo 15) (>= largo 10)) 5)
+      ((and (< largo 17) (>= largo 15)) 4)
+      ((and (< largo 20) (>= largo 17)) 3)
+      ((and (< largo 23) (>= largo 20)) 2)
+      (else 1)
+      )
+    )
+  )
+  
+(define test-chatbot (make-chatbot
+  '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
+    "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
+  '("Buenas tardes, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"
+    "Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?")
+  '("Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?"
+    "Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?")
+  '(" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país."
+    " ¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."
+    " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año.")
+  '("Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?"
+    "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?")
+  '("¡Es la mejor elección que pudiste elegir! "
+    "¡Excelente elección! ")
+  '(" es un lugar precioso! Los pasajes hacia allá cuestan "
+    " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
+  (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
+  '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
+    "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
+  '("¿A qué ciudad entonces te gustaría ir?"
+    "No hay problema, puedes elegir un nuevo destino")
+  '("Consultaré con mis superiores, te responderé en unos minutos."
+    "Voy a averigüarlo. Te respondo en un momento.")
+  '("A la pregunta que me habías hecho, el servicio comenzará en un tiempo estimado de 6 meses."
+    "A la pregunta que me habías hecho, el servicio se encontrará disponible desde el próximo verano.")
+  '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
+    "Hasta la próxima, espero haberte ayudado.")
+  (list (list 0 0))
+  )
+  )
+
+(define (messageToLog log message)
+  (append log (list (string-append
+              "["
+              (number->string (date-day (getDate message))) "-"
+              (number->string (date-month (getDate message))) "-"
+              (number->string (date-year (getDate message))) "] "
+              (number->string (date-hour (getDate message))) ":"
+              (number->string (date-minute (getDate message))) ":"
+              (number->string (date-second (getDate message))) " " (getAutor message) ": "
+              (getText message)
+              )
+              )
+          )
+  )
+
+;Recursión de cola
+(define (searchWordInList word list)
+  (if (empty? list)
+      #f
+      (if (string=? (car list) word)
+          #t
+          (searchWordInList word (cdr list))
+          )
+      )
+  )
+                          
+
 
 ;Esta función random tuma un xn y obtiene el xn+1 de la secuencia de números aleatorios.
 (define (myRandom seed)
