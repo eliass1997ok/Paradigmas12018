@@ -1,0 +1,11 @@
+#lang racket
+
+(define (myReverse lista)
+  (define (myReverse lista listaAux)
+    (if (null? lista)
+        listaAux
+        (myReverse (cdr lista) (cons (car lista) (listaAux)))
+        )
+    )
+  (myReverse lista '())
+  )

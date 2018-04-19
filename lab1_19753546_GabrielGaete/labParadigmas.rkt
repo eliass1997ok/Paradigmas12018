@@ -301,7 +301,28 @@
 ;##################################################################################################################
 ;;
 
-;CONSTRUCTOR
+;;
+; IMPLEMENTACIÓN DE TDA MENSAJE.
+;;
+
+;;
+; 1) Representación:
+; Para la representación de mensajes, se ocupará una lista de 3 elementos, en la cual se utilizará una fecha, un
+; remitente, y un 'mensaje' propiamente tal.
+; Ej:
+;   TDA Mensaje -> '(estructuraFecha "Remitente" "Mensaje")
+;
+; 2) Constructor:
+; Entrada:
+;     date -> Estructura de tipo date.
+;     autor -> string que representa al autor del mensaje.
+;     text -> string que representa el contenido del mensaje.
+;
+; Salida:
+;     Lista de tres elementos. El primero de estos corresponde a una fecha, el segundo al autor, y el tercero
+; al contenido del mensaje. En caso de que los argumentos de la función no sirvan para crear un TDA mensaje, se
+; retorna una lista vacía (o element nulo).
+;
 (define (message date autor text)
   (if (and (date*? date) (string? autor) (string? text))
       (list date autor text)
@@ -309,7 +330,13 @@
       )
   )
 
-;PERTENENCIA
+; 3) Pertenencia:
+; Entrada:
+;     m -> Argumento a verificar si corresponde a un mensaje.
+;
+; Salida:
+;     Booleano que determina si el argumento entregado corresponde a un TDA mensaje.
+;
 (define (message? m)
   (if (list? m)
       (if (empty? m)
@@ -329,7 +356,18 @@
       )
   )
 
-;SELECTORES
+; 4) Selectores:
+;
+; getDate permite obtener la estructura DATE dentro de un TDA mensaje. En caso que el argumento no sea un TDA mensaje,
+; se retorna un string vacío.
+;
+; Entrada:
+;     m -> Mensaje
+;
+; Salida:
+;     Se obtiene la estructura DATE que está dentro de un TDA mensaje. En caso que argumento entregado no sea un mensaje,
+; se retorna un string vacío.
+;
 
 (define (getDate m)
   (if (message? m)
@@ -338,6 +376,17 @@
       )
   )
 
+;
+; getAutor permite obtener al autor dentro de un TDA mensaje. En caso que el argumento no sea un TDA mensaje,
+; se retorna un string vacío.
+;
+; Entrada:
+;     m -> Mensaje
+;
+; Salida:
+;     Se obtiene el string que representa al autor que está dentro de un TDA mensaje. En caso que argumento entregado no sea un mensaje,
+; se retorna un string vacío.
+;
 (define (getAutor m)
   (if (message? m)
       (cadr m)
@@ -345,6 +394,17 @@
       )
   )
 
+;
+; getText permite obtener al contenido dentro de un TDA mensaje. En caso que el argumento no sea un TDA mensaje,
+; se retorna un string vacío.
+;
+; Entrada:
+;     m -> Mensaje
+;
+; Salida:
+;     Se obtiene el string que representa al contenido que está dentro de un TDA mensaje. En caso que argumento entregado no sea un mensaje,
+; se retorna un string vacío.
+;
 (define (getText m)
   (if (message? m)
       (caddr m)
@@ -352,8 +412,18 @@
       )
   )
 
-;MODIFICADORES
-
+; 5) Modificadores:
+;
+; setDate permite modificar la estructura DATE dentro de un TDA mensaje.
+;
+; Entrada:
+;     m -> Mensaje.
+;     date -> Estructura con la fecha del sistema.
+;
+; Salida:
+;     Se obtiene el TDA mensaje con la información actualizada. En caso que argumento entregado no sea un mensaje,
+; o que la nueva fecha no sea una estructura DATE, se retorna el argumento ingresado como TDA.
+;
 (define (setDate m date)
   (if (and (message? m) (date*? date))
       (message date (getAutor m) (getText m))
@@ -361,6 +431,17 @@
       )
   )
 
+;
+; setAutor permite modificar el string que representa al autor del mensaje dentro de un TDA mensaje.
+;
+; Entrada:
+;     m -> Mensaje.
+;     autor -> string con el nuevo remitente del mensaje.
+;
+; Salida:
+;     Se obtiene el TDA mensaje con la información actualizada. En caso que argumento entregado no sea un mensaje,
+; o que el nuevo autor no sea un string, se retorna el argumento ingresado como TDA.
+;
 (define (setAutor m autor)
   (if (and (message? m) (string? autor))
       (message (getDate m) autor (getText m))
@@ -368,14 +449,52 @@
       )
   )
 
+;
+; setText permite modificar el string que representa al contenido del mensaje dentro de un TDA mensaje.
+;
+; Entrada:
+;     m -> Mensaje.
+;     text -> string con el contenido nuevo que tendrá el mensaje.
+;
+; Salida:
+;     Se obtiene el TDA mensaje con la información actualizada. En caso que argumento entregado no sea un mensaje,
+; o que el nuevo contenido no sea un string, se retorna el argumento ingresado como TDA.
+;
 (define (setText m text)
   (if (and (message? m) (string? text))
       (message (getDate m) (getAutor m) text)
       m
       )
-  )
+  ) 
 
-;FUNCIONES QUE OPERAN SOBRE EL TDA    
+;;
+; 6)Funciones que operan sobre el TDA:
+;
+; La función permite, a través de un TDA mensaje, hacer una transcripción con un buen formato, hacia el log, el cual es una lista
+; de strings.
+;
+; Entrada:
+;     log -> lista de strings, representa al log.
+;     message -> TDA mensaje.
+;
+; Salida:
+;     Log modificado con el mensaje agregado. Este último mensaje es añadido siguiendo cierto formato, lo que permite mejor
+; legibilidad a la hora de enfrentarse al Log.
+;
+(define (messageToLog log message)
+  (append log (list (string-append
+              "["
+              (number->string (date-day (getDate message))) "-"
+              (number->string (date-month (getDate message))) "-"
+              (number->string (date-year (getDate message))) "] "
+              (number->string (date-hour (getDate message))) ":"
+              (number->string (date-minute (getDate message))) ":"
+              (number->string (date-second (getDate message))) " " (getAutor message) ": "
+              (getText message)
+              )
+              )
+          )
+  )
 
 ;;
 ; Función que permite obtener el largo de una lista.
@@ -472,22 +591,20 @@
   )
   )
 
-(define (messageToLog log message)
-  (append log (list (string-append
-              "["
-              (number->string (date-day (getDate message))) "-"
-              (number->string (date-month (getDate message))) "-"
-              (number->string (date-year (getDate message))) "] "
-              (number->string (date-hour (getDate message))) ":"
-              (number->string (date-minute (getDate message))) ":"
-              (number->string (date-second (getDate message))) " " (getAutor message) ": "
-              (getText message)
-              )
-              )
-          )
-  )
-
-;Recursión de cola
+;;
+; Función que permite determinar si un string está dentro de una lista.
+; 
+; Entrada:
+;     word -> String a buscar.
+;     list -> Lista.
+;
+; Salida:
+;    booleano que determina si el string se encuentra dentro de la lista o no.
+;
+; Recursividad:
+;     En esta implementación, se ha utilizado recursión de COLA. Se ha decidido utilizar esta recursión dado
+; que para la búsqueda de elementos dentro de una lista, es innecesario dejar estados en espera.
+;
 (define (searchWordInList word list)
   (if (empty? list)
       #f
@@ -499,8 +616,16 @@
   )
                           
 
-
-;Esta función random tuma un xn y obtiene el xn+1 de la secuencia de números aleatorios.
+;;
+; Función que permite generar un número pseudo-aleatorio a partir de una semilla.
+; 
+; Entrada:
+;     seed -> Número entero.
+;     list -> Lista.
+;
+; Salida:
+;    número entero pseudo aleatorio a partir de la semilla entregada.
+;
 (define (myRandom seed)
   (define myRandom
     (lambda
@@ -511,6 +636,16 @@
   (myRandom seed)
   )
 
+;;
+; Función que permite obtener un elemento pseudo-aleatorio de una lista a partir de una semilla.
+; 
+; Entrada:
+;     ls -> Lista.
+;     seed -> Número entero.
+;
+; Salida:
+;    elemento pseudo-aleatorio de una lista.
+;
 (define randomElement
   (lambda (ls seed)
       (list-ref ls (remainder (myRandom seed) (myLength ls)))
