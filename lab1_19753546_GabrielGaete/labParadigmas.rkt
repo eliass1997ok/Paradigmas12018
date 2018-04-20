@@ -8,7 +8,7 @@
 (define c 12345)
 (define m 2147483648)
 
-(define user1 (list "Gabriel" "¿Cuándo habrán pasajes para Brasil?" "Me gustaría viajar al sur" "Respóndeme lo que te pregunté" "Quiero viajar a Valparaíso" "Sí"))
+(define user1 (list "Gabriel" "¿Cuándo habrán pasajes para Brasil?" "Me gustaría viajar al sur" "Respóndeme lo que te pregunté" "Quiero viajar a Coyhaique" "Sí"))
 
 ;;
 ;Definición de una estructura de tipo chatbot. En ella, se encuentran los distintos tipos de
@@ -231,7 +231,10 @@
          "¡Excelente elección! ")
        '(" es un lugar precioso! Los pasajes hacia allá cuestan "
          " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
-       (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
+       (list (list "Arica" "$32.200 pesos") (list "Iquique" "$30.100 pesos") (list "Antofagasta" "$21.600 pesos") (list "Copiapó" "$15.000 pesos")
+             (list "La Serena" "$9.100 pesos") (list "Valparaíso" "$6.500 pesos") (list "Rancagua" "$3.000 pesos") (list "Talca" "$6.500 pesos")
+             (list "Concepción" "$13.900 pesos") (list "Temuco" "$14.900 pesos") (list "Puerto Montt" "$19.900 pesos")
+             (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "3000") (list "Valdivia" "$17.900 pesos"))
        '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
          "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
        '("¿A qué ciudad entonces te gustaría ir?"
@@ -562,7 +565,7 @@
     )
   )
   
-(define test-chatbot (make-chatbot
+(define chatbot1 (make-chatbot
   '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
     "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
   '("Buenas tardes, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"
@@ -578,7 +581,10 @@
     "¡Excelente elección! ")
   '(" es un lugar precioso! Los pasajes hacia allá cuestan "
     " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
-  (list (list "Valparaíso" "2000") (list "Punta Arenas" "3000"))
+  (list (list "Arica" "$32.200 pesos") (list "Iquique" "$30.100 pesos") (list "Antofagasta" "$21.600 pesos") (list "Copiapó" "$15.000 pesos")
+        (list "La Serena" "$9.100 pesos") (list "Valparaíso" "$6.500 pesos") (list "Rancagua" "$3.000 pesos") (list "Talca" "$6.500 pesos")
+        (list "Concepción" "$13.900 pesos") (list "Temuco" "$14.900 pesos") (list "Puerto Montt" "$19.900 pesos")
+        (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "3000") (list "Valdivia" "$17.900 pesos"))
   '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
     "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
   '("¿A qué ciudad entonces te gustaría ir?"
@@ -654,12 +660,12 @@
       )
     )
 
-  (define l1 (beginDialog test-chatbot '() 0))
-  (define l2 (sendMessage "Gabriel" test-chatbot l1 0))
-  (define l3 (sendMessage "¿Cuándo realizarán viajes a Quilicura?" test-chatbot l2 0))
-  (define l4 (sendMessage "Respóndeme lo que te pregunté" test-chatbot l3 0))
-  (define l5 (sendMessage "Tengo ganas de ir a Valparaíso" test-chatbot l4 0))
-  (define l6 (sendMessage "hmm mejor que no" test-chatbot l5 0))
-  (define l7 (sendMessage "Prefiero tomar un viaje a Punta Arenas" test-chatbot l6 0))
-  (define l8 (sendMessage "Sí, este sí" test-chatbot l7 0))
-  (define l9 (endDialog test-chatbot l8 0))
+  (define l1 (beginDialog chatbot1 '() 0))
+  (define l2 (sendMessage "Gabriel" chatbot1 l1 0))
+  (define l3 (sendMessage "¿Cuándo realizarán viajes a Quilicura?" chatbot1 l2 0))
+  (define l4 (sendMessage "Respóndeme lo que te pregunté" chatbot1 l3 0))
+  (define l5 (sendMessage "Tengo ganas de ir a Valparaíso" chatbot1 l4 0))
+  (define l6 (sendMessage "hmm mejor que no" chatbot1 l5 0))
+  (define l7 (sendMessage "Prefiero tomar un viaje a Coyhaique" chatbot1 l6 0))
+  (define l8 (sendMessage "Sí, este sí" chatbot1 l7 0))
+  (define l9 (endDialog chatbot1 l8 0))
