@@ -8,8 +8,6 @@
 (define c 12345)
 (define m 2147483648)
 
-(define user1 (list "Gabriel" "¿Cuándo habrán pasajes para Brasil?" "Me gustaría viajar al sur" "Respóndeme lo que te pregunté" "Quiero viajar a Valparaíso" "Sí"))
-
 ;;
 ;Definición de una estructura de tipo chatbot. En ella, se encuentran los distintos tipos de
 ;mensajes a los que el chatbot pueda acceder, dependiendo del flujo que tenga la conversación
