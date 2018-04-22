@@ -234,7 +234,7 @@
        (list (list "Arica" "$32.200 pesos") (list "Iquique" "$30.100 pesos") (list "Antofagasta" "$21.600 pesos") (list "Copiapó" "$15.000 pesos")
              (list "La Serena" "$9.100 pesos") (list "Valparaíso" "$6.500 pesos") (list "Rancagua" "$3.000 pesos") (list "Talca" "$6.500 pesos")
              (list "Concepción" "$13.900 pesos") (list "Temuco" "$14.900 pesos") (list "Puerto Montt" "$19.900 pesos")
-             (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "3000") (list "Valdivia" "$17.900 pesos"))
+             (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "$15.000 pesos") (list "Valdivia" "$17.900 pesos"))
        '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
          "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
        '("¿A qué ciudad entonces te gustaría ir?"
@@ -299,6 +299,22 @@
     )
   (recursiveLog user chatbot (beginDialog chatbot log seed) seed)
   )
+
+;;
+;##################################################################################################################
+;############################################# FUNCIONALIDADES EXTRAS #############################################
+;##################################################################################################################
+;;
+
+(define (displayLog chatbot log)
+  log
+   ; (if (null? log)
+      ;(display " ")
+      ;(display (string-append (car log) (displayLog chatbot (cdr log))))
+        
+        ;)
+  )
+
 
 ;;
 ;##################################################################################################################
@@ -487,18 +503,21 @@
 ; legibilidad a la hora de enfrentarse al Log.
 ;
 (define (messageToLog log message)
-  (append log (list (string-append
-              "["
-              (number->string (date-day (getDate message))) "-"
-              (number->string (date-month (getDate message))) "-"
-              (number->string (date-year (getDate message))) "] "
-              (number->string (date-hour (getDate message))) ":"
-              (number->string (date-minute (getDate message))) ":"
-              (number->string (date-second (getDate message))) " " (getAutor message) ": "
-              (getText message)
+  (if (message? message)
+      (append log (list (string-append
+                         "["
+                         (number->string (date-day (getDate message))) "-"
+                         (number->string (date-month (getDate message))) "-"
+                         (number->string (date-year (getDate message))) "] "
+                         (number->string (date-hour (getDate message))) ":"
+                         (number->string (date-minute (getDate message))) ":"
+                         (number->string (date-second (getDate message))) " " (getAutor message) ": "
+                         (getText message)
+                         )
+                        )
               )
-              )
-          )
+      log
+      )
   )
 
 ;;
@@ -584,7 +603,7 @@
   (list (list "Arica" "$32.200 pesos") (list "Iquique" "$30.100 pesos") (list "Antofagasta" "$21.600 pesos") (list "Copiapó" "$15.000 pesos")
         (list "La Serena" "$9.100 pesos") (list "Valparaíso" "$6.500 pesos") (list "Rancagua" "$3.000 pesos") (list "Talca" "$6.500 pesos")
         (list "Concepción" "$13.900 pesos") (list "Temuco" "$14.900 pesos") (list "Puerto Montt" "$19.900 pesos")
-        (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "3000") (list "Valdivia" "$17.900 pesos"))
+        (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "$15.000 pesos") (list "Valdivia" "$17.900 pesos"))
   '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
     "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
   '("¿A qué ciudad entonces te gustaría ir?"
@@ -659,13 +678,3 @@
       (list-ref ls (remainder (myRandom seed) (myLength ls)))
       )
     )
-
-  (define l1 (beginDialog chatbot1 '() 0))
-  (define l2 (sendMessage "Gabriel" chatbot1 l1 0))
-  (define l3 (sendMessage "¿Cuándo realizarán viajes a Quilicura?" chatbot1 l2 0))
-  (define l4 (sendMessage "Respóndeme lo que te pregunté" chatbot1 l3 0))
-  (define l5 (sendMessage "Tengo ganas de ir a Valparaíso" chatbot1 l4 0))
-  (define l6 (sendMessage "hmm mejor que no" chatbot1 l5 0))
-  (define l7 (sendMessage "Prefiero tomar un viaje a Coyhaique" chatbot1 l6 0))
-  (define l8 (sendMessage "Sí, este sí" chatbot1 l7 0))
-  (define l9 (endDialog chatbot1 l8 0))
