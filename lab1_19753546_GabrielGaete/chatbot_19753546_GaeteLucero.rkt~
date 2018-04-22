@@ -9,45 +9,6 @@
 (define m 2147483648)
 
 (define user1 (list "Gabriel" "¿Cuándo habrán pasajes para Brasil?" "Me gustaría viajar al sur" "Respóndeme lo que te pregunté" "Quiero viajar a Coyhaique" "Sí"))
-(define user2 (list "Diego" "Me gustaría viajar a La Serena" "No" "Prefiero viajar a Coyhaique" "Sí"))
-(define user3 (list "Paloma" "¿Cuándo habrán viajes hacia China?" "Me gustaría viajar a Iquique" "No" "¿Podrías responderme lo que te pregunté de China?" "Quiero viajar a Concepción" "Sí"))
-
-;;
-; Definición de chatbot1, el cual servirá para utilizar las funciones sin necesidad de crear un chatbot cada vez.
-;;
-(define chatbot1 (make-chatbot
-  '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
-    "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
-  '("Buenas tardes, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"
-    "Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?")
-  '("Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?"
-    "Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?")
-  '(" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país."
-    " ¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."
-    " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año.")
-  '("Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?"
-    "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?")
-  '("¡Es la mejor elección que pudiste elegir! "
-    "¡Excelente elección! ")
-  '(" es un lugar precioso! Los pasajes hacia allá cuestan "
-    " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
-  (list (list "Arica" "$32.200 pesos") (list "Iquique" "$30.100 pesos") (list "Antofagasta" "$21.600 pesos") (list "Copiapó" "$15.000 pesos")
-        (list "La Serena" "$9.100 pesos") (list "Valparaíso" "$6.500 pesos") (list "Rancagua" "$3.000 pesos") (list "Talca" "$6.500 pesos")
-        (list "Concepción" "$13.900 pesos") (list "Temuco" "$14.900 pesos") (list "Puerto Montt" "$19.900 pesos")
-        (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "$15.000 pesos") (list "Valdivia" "$17.900 pesos"))
-  '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
-    "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
-  '("¿A qué ciudad entonces te gustaría ir?"
-    "No hay problema, puedes elegir un nuevo destino")
-  '("Consultaré con mis superiores, te responderé en unos minutos."
-    "Voy a averigüarlo. Te respondo en un momento.")
-  '("A la pregunta que me habías hecho, el servicio comenzará en un tiempo estimado de 6 meses."
-    "A la pregunta que me habías hecho, el servicio se encontrará disponible desde el próximo verano.")
-  '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
-    "Hasta la próxima, espero haberte ayudado.")
-  (list (list 0 0))
-  )
-  )
 
 ;;
 ;Definición de una estructura de tipo chatbot. En ella, se encuentran los distintos tipos de
@@ -341,6 +302,22 @@
 
 ;;
 ;##################################################################################################################
+;############################################# FUNCIONALIDADES EXTRAS #############################################
+;##################################################################################################################
+;;
+
+(define (displayLog chatbot log)
+  log
+   ; (if (null? log)
+      ;(display " ")
+      ;(display (string-append (car log) (displayLog chatbot (cdr log))))
+        
+        ;)
+  )
+
+
+;;
+;##################################################################################################################
 ;############################################# TIPO DE DATO ABSTRACTO #############################################
 ;##################################################################################################################
 ;;
@@ -605,6 +582,40 @@
       (else 1)
       )
     )
+  )
+  
+(define chatbot1 (make-chatbot
+  '("Buenos días, mi nombre es Bot y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?"
+    "Hola, mi nombre es Bot, espero ser de ayuda para buscar un viaje que le acomode. ¿Cuál es su nombre?")
+  '("Buenas tardes, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"
+    "Buenas tardes, mi nombre es Bot, y estoy aquí para ayudarte con tu próximo viaje. ¿Cuál es tu nombre?")
+  '("Buenas noches, mi nombre es Bot, y estoy aquí para ayudarte a elegir tu próximo destino. ¿Cómo debería llamarte?"
+    "Buenas noches, mi nombre es Bot, y estoy aquí para que conversemos sobre tu viaje, pero antes, ¿Cuál es tu nombre?")
+  '(" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país."
+    " ¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."
+    " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año.")
+  '("Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?"
+    "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?")
+  '("¡Es la mejor elección que pudiste elegir! "
+    "¡Excelente elección! ")
+  '(" es un lugar precioso! Los pasajes hacia allá cuestan "
+    " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta ")
+  (list (list "Arica" "$32.200 pesos") (list "Iquique" "$30.100 pesos") (list "Antofagasta" "$21.600 pesos") (list "Copiapó" "$15.000 pesos")
+        (list "La Serena" "$9.100 pesos") (list "Valparaíso" "$6.500 pesos") (list "Rancagua" "$3.000 pesos") (list "Talca" "$6.500 pesos")
+        (list "Concepción" "$13.900 pesos") (list "Temuco" "$14.900 pesos") (list "Puerto Montt" "$19.900 pesos")
+        (list "Coyhaique" "$33.000 pesos") (list "Punta Arenas" "$15.000 pesos") (list "Valdivia" "$17.900 pesos"))
+  '("¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web."
+    "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web")
+  '("¿A qué ciudad entonces te gustaría ir?"
+    "No hay problema, puedes elegir un nuevo destino")
+  '("Consultaré con mis superiores, te responderé en unos minutos."
+    "Voy a averigüarlo. Te respondo en un momento.")
+  '("A la pregunta que me habías hecho, el servicio comenzará en un tiempo estimado de 6 meses."
+    "A la pregunta que me habías hecho, el servicio se encontrará disponible desde el próximo verano.")
+  '("Hasta luego, espero haber sido de ayuda en esta oportunidad."
+    "Hasta la próxima, espero haberte ayudado.")
+  (list (list 0 0))
+  )
   )
 
 ;;
