@@ -12,6 +12,30 @@
 (define user2 (list "Diego" "Me gustaría viajar a La Serena" "No" "Prefiero viajar a Coyhaique" "Sí"))
 (define user3 (list "Paloma" "¿Cuándo habrán viajes hacia China?" "Me gustaría viajar a Iquique" "No" "¿Podrías responderme lo que te pregunté de China?" "Quiero viajar a Concepción" "Sí"))
 
+
+;;
+;Definición de una estructura de tipo chatbot. En ella, se encuentran los distintos tipos de
+;mensajes a los que el chatbot pueda acceder, dependiendo del flujo que tenga la conversación.
+
+(define-struct chatbot
+  (
+   saludosMañana     ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
+   saludosTarde      ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la tarde
+   saludosNoche      ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la noche
+   ofrecerNombre     ;Lista en la que se tendrán los primeros diálogos para respuestas tras el nombre
+   noEntender        ;Lista en la que se tendrán las respuestas en caso de que el bot no entienda el flujo de conversación
+   respuestaViaje1   ;Lista en la que se tendrán los inicios a una respuesta tras identificar el viaje
+   respuestaViaje2   ;Continuación de respuesta, la que permite saber el precio
+   viajes            ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
+   confirmacion      ;Lista que contiene respuestas para confirmación de pasajes
+   nuevaBusqueda     ;Lista en la que se tendrán las posibilidades de realizar una nueva búsqueda.
+   promise           ;Lista de promesas
+   lazyAnswer        ;Lista de respuestas a promesas
+   despedida         ;Lista en la que se contendrán los distintos tipos de despedidas que puede generar el bot.
+   pairID/Rate       ;Lista de listas en las que se tendrá el id y su respectivo rate del bot
+   )
+  )
+
 ;;
 ; Definición de chatbot1, el cual servirá para utilizar las funciones sin necesidad de crear un chatbot cada vez.
 ;;
@@ -50,29 +74,6 @@
   )
 
 ;;
-;Definición de una estructura de tipo chatbot. En ella, se encuentran los distintos tipos de
-;mensajes a los que el chatbot pueda acceder, dependiendo del flujo que tenga la conversación
-
-(define-struct chatbot
-  (
-   saludosMañana     ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la mañana
-   saludosTarde      ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la tarde
-   saludosNoche      ;Lista en la que se tendrán los distintos tipos de saludos que puede generar el bot en la noche
-   ofrecerNombre     ;Lista en la que se tendrán los primeros diálogos para respuestas tras el nombre
-   noEntender        ;Lista en la que se tendrán las respuestas en caso de que el bot no entienda el flujo de conversación
-   respuestaViaje1   ;Lista en la que se tendrán los inicios a una respuesta tras identificar el viaje
-   respuestaViaje2   ;Continuación de respuesta, la que permite saber el precio
-   viajes            ;Lista de pares en los que se tienen los distintos destinos y sus respectivos valores
-   confirmacion      ;Lista que contiene respuestas para confirmación de pasajes
-   nuevaBusqueda     ;Lista en la que se tendrán las posibilidades de realizar una nueva búsqueda.
-   promise           ;Lista de respuestas/promesas
-   lazyAnswer        ;Lista de respuestas/promesas
-   despedida         ;Lista en la que se contendrán los distintos tipos de despedidas que puede generar el bot.
-   pairID/Rate       ;Lista de pares en las que se tendrá el id y su respectivo rate del bot
-   )
-  )
-
-;;
 ;##################################################################################################################
 ;############################################# FUNCIONES OBLIGATORIAS #############################################
 ;##################################################################################################################
@@ -88,6 +89,9 @@
 ;
 ; Salida:
 ;     Lista de strings, representando a un log actualizado en el que se mantienen las conversaciones del usuario y un chatbot.
+;
+; Signature:
+;     chatbot X lista X Integer -> lista
 ;
 (define (beginDialog chatbot log seed)    
   (append log
@@ -145,7 +149,25 @@
 ; Salida:
 ;     Lista de strings, representando a un log actualizado en el que se mantienen las conversaciones del usuario y un chatbot.
 ;
+; Signature:
+;     string X chatbot X lista X Integer  -> lista
+;
 (define (sendMessage msg chatbot log seed)
+  ;;
+  ; Función que permite determinar si hay elementos en común entre dos listas.
+  ; Entrada:
+  ;     list1 -> Lista
+  ;     list2 -> Lista
+  ;
+  ; Salida:
+  ;     Booleano, que determina si existe un elemento en común entre las dos listas.
+  ;
+  ; Signature:
+  ;     lista X lista -> Booleano
+  ;
+  ; Recursividad:
+  ;     Se utiliza recursividad de COLA, ya que no es necesario dejar estados en espera.
+  ;
   (define (elementInCommon? list1 list2)
   (cond
     [(or (empty? list1) (empty? list2)) #f]
@@ -153,6 +175,19 @@
     [else (elementInCommon? (cdr list1) list2)]
     )
   )
+  ; Función que permite responder promesas pendientes dentro del log.
+  ; Entrada:
+  ;     log -> Lista
+  ;
+  ; Salida:
+  ;     Log actualizado con la promesa respondida
+  ;
+  ; Signature:
+  ;     lista X lista -> lista
+  ;
+  ; Recursividad:
+  ;     Se utiliza recursividad de COLA, ya que no es necesario dejar estados en espera.
+  ;
   (define (answerPromises log)
     (if (empty? log)
         '()
@@ -162,21 +197,22 @@
             )
         )
     )
+  ; Función que permite obtener la lista con la ciudad y el precio que el usuario pide.
+  ; Entrada:
+  ;     list1 -> Lista
+  ;     listOfList -> Lista
+  ;
+  ; Salida:
+  ;     lista con la ciudad y el precio de los pasajes.
+  ;
+  ; Signature:
+  ;     lista X lista -> lista
+  ;
+  ; Recursividad:
+  ;     Se utiliza recursividad de COLA, ya que no es necesario dejar estados en espera.
+  ;
   (define (getCityList list1 listOfList)
-    (define intersect
-    (lambda (set1 set2)
-            (letrec
-              ((I (lambda (set)
-                      (cond
-                           ((null? set) (quote ()))
-                           ((member (car set) set2)
-                            (cons (car set)
-                                  (I (cdr set))))
-                           (else (I (cdr set)))))))
-            (I set1))
-      )
-      )
-    (if (empty? (intersect list1 (string-split (caar listOfList))))
+    (if (empty? ((lambda (list1 list2) (letrec ((I (lambda (set)(cond ((null? set)(quote ()))((member (car set) list2)(cons (car set)(I (cdr set))))(else (I (cdr set)))))))(I list1))) list1 (string-split (caar listOfList))))
         (getCityList list1 (cdr listOfList))
         (car listOfList)
         )
@@ -205,6 +241,9 @@
 ;
 ; Salida:
 ;     Lista de strings, representando a un log actualizado en el que se mantienen las conversaciones del usuario y un chatbot.
+;
+; Signature:
+;     chatbot X lista X Integer -> lista
 ;
 (define (endDialog chatbot log seed)
   (append log
@@ -251,6 +290,9 @@
 ; Salida:
 ;     Estructura de tipo chatbot. En caso de que la conversación no haya terminado, esta función entrega al mismo chatbot, sin
 ; aplicar una evaluación. En caso contrario, el chatbot se evalúa, y se entrega uno actualizado.
+;
+; Signature:
+;     chatbot X Integer X function X lista  -> chatbot
 ;
 (define (rate chatbot score f log)
   (if (searchWordInList "EndDialog" (string-split (last log)))
@@ -324,6 +366,9 @@
 ; Salida:
 ;     Lista de strings, que representa a un log modificado con el resultado de la conversación simulada.
 ;
+; Signature:
+;    lista X chatbot X lista X Integer -> lista
+;
 ; Recursividad:
 ;     En esta implementación, se ha utilizado recursión de COLA. Se ha decidido utilizar esta recursión para
 ; obtener un cálculo en el que no queden estados en espera, con el fin de reducir el tiempo necesario para
@@ -337,6 +382,41 @@
         )
     )
   (recursiveLog user chatbot (beginDialog chatbot log seed) seed)
+  )
+
+;;
+;##################################################################################################################
+;############################################# FUNCIONALIDADES EXTRAS #############################################
+;##################################################################################################################
+;;
+
+;;
+; Función que permite mostrar el log por pantalla.
+; 
+; Entrada:
+;     chatbot -> corresponde al chatbot con el cual se simulará la conversación.
+;     log -> corresponde a una lista de strings, siendo esta la representación del log histórico de conversaciones.
+;
+; Salida:
+;     Display del log recibido.
+;
+; Signature:
+;     chatbot X lista -> display
+;
+; Recursividad:
+;     En esta implementación, se ha utilizado una función auxiliar que recurre a el concepto de recursión de COLA.
+; Esta función helper recibe un parámetro más, el cual es un string, por lo que su signature es: chatbot X lista X string -> string
+; Utiliza recursión de COLA con el fin de no generar estados en espera, con tal de reducir el tiempo necesario para imprimir por pantalla.
+
+
+(define (displayLog chatbot log)
+  (define (displayLog chatbot log string)
+    (if (empty? log)
+        string
+        (displayLog chatbot (cdr log) (string-append string (car log) "\n"))
+        )
+    )
+  (display (displayLog chatbot log ""))
   )
 
 ;;
@@ -367,6 +447,9 @@
 ; al contenido del mensaje. En caso de que los argumentos de la función no sirvan para crear un TDA mensaje, se
 ; retorna una lista vacía (o element nulo).
 ;
+; Signature:
+;     date X string X string -> lista
+;
 (define (message date autor text)
   (if (and (date*? date) (string? autor) (string? text))
       (list date autor text)
@@ -380,6 +463,9 @@
 ;
 ; Salida:
 ;     Booleano que determina si el argumento entregado corresponde a un TDA mensaje.
+;
+; Signature:
+;     lista -> booleano
 ;
 (define (message? m)
   (if (list? m)
@@ -412,6 +498,9 @@
 ;     Se obtiene la estructura DATE que está dentro de un TDA mensaje. En caso que argumento entregado no sea un mensaje,
 ; se retorna un string vacío.
 ;
+; Signature:
+;     lista -> string
+;
 
 (define (getDate m)
   (if (message? m)
@@ -431,6 +520,9 @@
 ;     Se obtiene el string que representa al autor que está dentro de un TDA mensaje. En caso que argumento entregado no sea un mensaje,
 ; se retorna un string vacío.
 ;
+; Signature:
+;     lista -> string
+;
 (define (getAutor m)
   (if (message? m)
       (cadr m)
@@ -448,6 +540,9 @@
 ; Salida:
 ;     Se obtiene el string que representa al contenido que está dentro de un TDA mensaje. En caso que argumento entregado no sea un mensaje,
 ; se retorna un string vacío.
+;
+; Signature:
+;     lista -> string
 ;
 (define (getText m)
   (if (message? m)
@@ -468,6 +563,9 @@
 ;     Se obtiene el TDA mensaje con la información actualizada. En caso que argumento entregado no sea un mensaje,
 ; o que la nueva fecha no sea una estructura DATE, se retorna el argumento ingresado como TDA.
 ;
+; Signature:
+;     lista X date -> lista
+;
 (define (setDate m date)
   (if (and (message? m) (date*? date))
       (message date (getAutor m) (getText m))
@@ -485,6 +583,9 @@
 ; Salida:
 ;     Se obtiene el TDA mensaje con la información actualizada. En caso que argumento entregado no sea un mensaje,
 ; o que el nuevo autor no sea un string, se retorna el argumento ingresado como TDA.
+;
+; Signature:
+;     lista X string -> lista
 ;
 (define (setAutor m autor)
   (if (and (message? m) (string? autor))
@@ -504,12 +605,15 @@
 ;     Se obtiene el TDA mensaje con la información actualizada. En caso que argumento entregado no sea un mensaje,
 ; o que el nuevo contenido no sea un string, se retorna el argumento ingresado como TDA.
 ;
+; Signature:
+;     lista X string -> lista
+;
 (define (setText m text)
   (if (and (message? m) (string? text))
       (message (getDate m) (getAutor m) text)
       m
       )
-  ) 
+  )
 
 ;;
 ; 6)Funciones que operan sobre el TDA:
@@ -523,7 +627,10 @@
 ;
 ; Salida:
 ;     Log modificado con el mensaje agregado. Este último mensaje es añadido siguiendo cierto formato, lo que permite mejor
-; legibilidad a la hora de enfrentarse al Log.
+; legibilidad a la hora de utilizar al Log.
+;
+; Signature:
+;     lista X lista -> lista
 ;
 (define (messageToLog log message)
   (if (message? message)
@@ -552,6 +659,9 @@
 ; Salida:
 ;     Número entero que representa el largo de la lista.
 ;
+; Signature:
+;     lista -> Integer
+;
 ; Recursividad:
 ;     En esta implementación, se ha utilizado recursión NATURAL. Se ha decidido utilizar esta recursión para
 ; obtener un cálculo directo, sin tener que recurrir a argumentos auxiliares dentro de la función, ni tampoco
@@ -573,6 +683,9 @@
 ; Salida:
 ;     Número entero que representa el largo de la última conversación dentro del log.
 ;
+; Signature:
+;     lista -> Integer
+;
 ; Recursividad:
 ;     En esta implementación, se ha utilizado recursión NATURAL. Se ha decidido utilizar esta recursión para
 ; obtener un cálculo directo, sin tener que recurrir a argumentos auxiliares dentro de la función, ni tampoco
@@ -592,6 +705,9 @@
 ;
 ; Salida:
 ;     Número entero que representa la calificación de la última conversación en base a su largo.
+;
+; Signature:
+;     lista -> Integer
 ;
 (define (autoRate log)
   (let ((largo (lengthToRate (reverse log))))
@@ -616,6 +732,9 @@
 ;
 ; Salida:
 ;    booleano que determina si el string se encuentra dentro de la lista o no.
+;
+; Signature:
+;     string X lista -> booleano
 ;
 ; Recursividad:
 ;     En esta implementación, se ha utilizado recursión de COLA. Se ha decidido utilizar esta recursión dado
@@ -642,6 +761,9 @@
 ; Salida:
 ;    número entero pseudo aleatorio a partir de la semilla entregada.
 ;
+; Signature:
+;     Integer -> Integer
+;
 (define (myRandom seed)
   (define myRandom
     (lambda
@@ -661,6 +783,9 @@
 ;
 ; Salida:
 ;    elemento pseudo-aleatorio de una lista.
+;
+; Signature:
+;     lista X Integer -> elemento de lista
 ;
 (define randomElement
   (lambda (ls seed)
