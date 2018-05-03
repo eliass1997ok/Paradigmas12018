@@ -80,7 +80,7 @@
 ;;
 
 ;;
-; Función que permite iniciar una conversación con un chatbot.
+; beginDialog: Función que permite iniciar una conversación con un chatbot.
 ;
 ; Entrada:
 ;     chatbot -> corresponde al chatbot con el que se tendrá la conversación.
@@ -139,7 +139,7 @@
   )
 
 ;;
-; Función que permite enviar un mensaje a un chatbot.
+; sendMessage: Función que permite enviar un mensaje a un chatbot.
 ; Entrada:
 ;     msg -> String ingresado por el usuario. Corresponde a su mensaje hacia el chatbot.
 ;     chatbot -> corresponde al chatbot con el que se mantiene una conversación.
@@ -154,7 +154,7 @@
 ;
 (define (sendMessage msg chatbot log seed)
   ;;
-  ; Función que permite determinar si hay elementos en común entre dos listas.
+  ; elementInCommon?: Función que permite determinar si hay elementos en común entre dos listas.
   ; Entrada:
   ;     list1 -> Lista
   ;     list2 -> Lista
@@ -175,7 +175,7 @@
     [else (elementInCommon? (cdr list1) list2)]
     )
   )
-  ; Función que permite responder promesas pendientes dentro del log.
+  ; answerPromises: Función que permite responder promesas pendientes dentro del log.
   ; Entrada:
   ;     log -> Lista
   ;
@@ -197,7 +197,7 @@
             )
         )
     )
-  ; Función que permite obtener la lista con la ciudad y el precio que el usuario pide.
+  ; getCityList: Función que permite obtener la lista con la ciudad y el precio que el usuario pide.
   ; Entrada:
   ;     list1 -> Lista
   ;     listOfList -> Lista
@@ -232,7 +232,7 @@
   )
 
 ;;
-; Función que permite finalizar una conversación con un chatbot.
+; endDialog: Función que permite finalizar una conversación con un chatbot.
 ;
 ; Entrada:
 ;     chatbot -> corresponde al chatbot con el que se terminará la conversación.
@@ -279,7 +279,7 @@
   )
 
 ;;
-; Función que permite evaluar a un chatbot en base a su conversación y a una nota dada por el usuario.
+; rate: Función que permite evaluar a un chatbot en base a su conversación y a una nota dada por el usuario.
 ;
 ; Entrada:
 ;     chatbot -> corresponde al chatbot a evaluar.
@@ -355,7 +355,7 @@
   )
 
 ;;
-; Función que permite simular una conversación a partir de una lista de strings.
+; test: Función que permite simular una conversación a partir de una lista de strings.
 ; 
 ; Entrada:
 ;     user -> Lista de strings que representan los mensajes del usuario.
@@ -391,7 +391,7 @@
 ;;
 
 ;;
-; Función que permite mostrar el log por pantalla.
+; displayLog: Función que permite mostrar el log por pantalla.
 ; 
 ; Entrada:
 ;     chatbot -> corresponde al chatbot con el cual se simulará la conversación.
@@ -437,6 +437,7 @@
 ;   TDA Mensaje -> '(estructuraFecha "Remitente" "Mensaje")
 ;
 ; 2) Constructor:
+; Message: Constructor
 ; Entrada:
 ;     date -> Estructura de tipo date.
 ;     autor -> string que representa al autor del mensaje.
@@ -458,6 +459,7 @@
   )
 
 ; 3) Pertenencia:
+; message?: Pertenencia
 ; Entrada:
 ;     m -> Argumento a verificar si corresponde a un mensaje.
 ;
@@ -618,7 +620,7 @@
 ;;
 ; 6)Funciones que operan sobre el TDA:
 ;
-; La función permite, a través de un TDA mensaje, hacer una transcripción con un buen formato, hacia el log, el cual es una lista
+; messageToLog: La función permite, a través de un TDA mensaje, hacer una transcripción con un buen formato, hacia el log, el cual es una lista
 ; de strings.
 ;
 ; Entrada:
@@ -651,7 +653,7 @@
   )
 
 ;;
-; Función que permite obtener el largo de una lista.
+; myLength: Función que permite obtener el largo de una lista.
 ; 
 ; Entrada:
 ;     list -> Lista
@@ -675,7 +677,7 @@
    )
 
 ;;
-; Función que permite obtener el largo de la última conversación dentro de un log.
+; lengthToRate: Función que permite obtener el largo de la última conversación dentro de un log.
 ; 
 ; Entrada:
 ;     reverseList -> Lista que representa al log. Este viene invertido.
@@ -698,7 +700,7 @@
       )
   )
 ;;
-; Función que permite determinar una nota para la última conversación a partir del largo de ésta.
+; autoRate: Función que permite determinar una nota para la última conversación a partir del largo de ésta.
 ; 
 ; Entrada:
 ;     log -> Lista que representa al log.
@@ -724,7 +726,7 @@
   )
 
 ;;
-; Función que permite determinar si un string está dentro de una lista.
+; searchWordInList: Función que permite determinar si un string está dentro de una lista.
 ; 
 ; Entrada:
 ;     word -> String a buscar.
@@ -752,7 +754,7 @@
                           
 
 ;;
-; Función que permite generar un número pseudo-aleatorio a partir de una semilla.
+; myRandom: Función que permite generar un número pseudo-aleatorio a partir de una semilla.
 ; 
 ; Entrada:
 ;     seed -> Número entero.
@@ -775,7 +777,7 @@
   )
 
 ;;
-; Función que permite obtener un elemento pseudo-aleatorio de una lista a partir de una semilla.
+; randomElement: Función que permite obtener un elemento pseudo-aleatorio de una lista a partir de una semilla.
 ; 
 ; Entrada:
 ;     ls -> Lista.
