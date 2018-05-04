@@ -14,19 +14,27 @@ capitalRegional(arica).
 capitalRegional(arica).
 
 compareList([Head|Tails], [Head|Tails]).
-
-%% CONSTRUCTOR TDA MENSAJE
-crearMensajeAux(FECHA, AUTOR, MENSAJE, LISTA):- compareList(LISTA, [FECHA, AUTOR, MENSAJE]).
-
-crearMensaje(AUTOR, MENSAJE, RESULTADO):- 
+createDate(Date):-
 	get_date_time_value(day, DAY),
 	get_date_time_value(month, MONTH),
 	get_date_time_value(year, YEAR),
 	string_concat(DAY,"/", AUX1),
 	string_concat(MONTH, "/", AUX2),
 	string_concat(AUX1, AUX2, AUX3),
-	string_concat(AUX3,YEAR, FECHA),
+	string_concat(AUX3,YEAR, Date).
+	
+chatbot( [
+		 ["Hola, mi nombre es Bot, y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?", "Hola, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"], 
+		 ["Hola Mundito"],
+		 [[0, 0]]
+		 ]
+		).
 
+%% CONSTRUCTOR TDA MENSAJE
+crearMensajeAux(FECHA, AUTOR, MENSAJE, LISTA):- compareList(LISTA, [FECHA, AUTOR, MENSAJE]).
+
+crearMensaje(AUTOR, MENSAJE, RESULTADO):- 
+	createDate(FECHA),
 	crearMensajeAux(FECHA, AUTOR, MENSAJE, RESULTADO).
 
 %PERTENENCIA TDA MENSAJE
@@ -67,11 +75,29 @@ setContentMessage(Message, Content, NewMessage):-
 %%FUNCIONES QUE OPERAN SOBRE EL TDA
 messageToLog(CurrentLog, Message, UpdatedLog):-
 	isMessage(Message),
-	reverse([CurrentLog], ReversedCurrentLog),
-	append([], [Message], EncapsulatedMessage),
-	append(EncapsulatedMessage, [ReversedCurrentLog], ReversedUpdatedLog),
-	reverse(ReversedUpdatedLog, UpdatedLog).
+	append(CurrentLog, [Message], UpdatedLog).
+	%% reverse(CurrentLog, ReversedCurrentLog),
+	%% append([], [Message], EncapsulatedMessage),
+	%% append(EncapsulatedMessage, [ReversedCurrentLog], ReversedUpdatedLog),
+	%% reverse(ReversedUpdatedLog, UpdatedLog).
 
+beginDialog(Chatbot, InputLog, Seed, OutputLog):-
+	chatbot(Chatbot),
+	nth0(0, Chatbot, Greetings),
+	set_random(seed(Seed)),
+	NumberRandom is random(Seed),
+	length(Greetings, GreetingsLength),
+	Position is  NumberRandom mod GreetingsLength,
+	nth0(Position, Greetings, Content),
+	%% IDRatePosition -> SOLO PARA ESTE CASO ES 2!!! FIJARSE EN ESTRUCTURA CHATBOT.
+	nth0(2, Chatbot, ListIDRates),
+	reverse(ListIDRates, ReversedListIDRates),
+	nth0(0, ReversedListIDRates, PairIDRate),
+	createDate(Date),
+	append(InputLog, [[Date, "BeginDialog", "ID-Rate:", PairIDRate]], BeginDialogLog),
+	crearMensaje("Bot", Content, Result),
+
+	messageToLog(BeginDialogLog, Result, OutputLog).
 
 
 %% COMIENZO LABORATORIO.
