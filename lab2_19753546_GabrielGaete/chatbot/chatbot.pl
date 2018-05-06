@@ -45,11 +45,12 @@ createDate(Date):-
 	
 chatbot( [
 		 ["Hola, mi nombre es Bot, y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?", "Hola, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"], 
-		 [" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte.", "y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año."],
+		 [" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte.", " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año."],
 		 [[0, 0]],
 		 ["¿A qué ciudad entonces te gustaría ir?", "No hay problema, puedes elegir un nuevo destino"],
 		 ["¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web.", "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web"],
-		 [" es un lugar precioso! Los pasajes hacia allá cuestan ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "]
+		 [" es un lugar precioso! Los pasajes hacia allá cuestan ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "],
+		 ["Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?", "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?"]
 		 ]
 		).
 
@@ -142,7 +143,22 @@ isCityOnMessage(String, City):-
 	%% nth0(0, Tails, Ciudad),
 	%% isCityOnMessage(String, Tails, Ciudad).
 
-determineAnswer(String, Chatbot, NumberRandom, Answer):-
+answerToName(String, Chatbot, NumberRandom, Answer):-
+	nth0(1, Chatbot, ListOfAnswersWithoutName),
+	length(ListOfAnswersWithoutName, LengthListOfAnswersWithoutName),
+	Position is NumberRandom mod LengthListOfAnswersWithoutName,
+	nth0(Position, ListOfAnswersWithoutName, MessageSelected),
+	string_concat(String, MessageSelected, ContentOfMessage),
+	crearMensaje("Bot", ContentOfMessage, Answer).
+
+didntUnderstood(Chatbot, NumberRandom, Answer):-
+	nth0(6, Chatbot, ListOfDontUnderstanding),
+	length(ListOfDontUnderstanding, LengthOfDontUnderstandings),
+	Position is NumberRandom mod LengthOfDontUnderstandings,
+	nth0(Position, ListOfDontUnderstanding, Answer).
+
+
+determineAnswer(String, Chatbot, NumberRandom, CurrentLog, Answer):-
 	%% listadoCapitales(ListaCapitales),
 	isCityOnMessage(String, Ciudad),
 	%% write("acá voy"),
@@ -150,8 +166,8 @@ determineAnswer(String, Chatbot, NumberRandom, Answer):-
 	%% intersection(SplitedMessage2, ListaCapitales, [First|_]),
 	%% write(Ciudad), 
 	capitalRegional(Ciudad, Precio),
-	createAnswer(Ciudad, Precio, NumberRandom, Chatbot, Answer),
-	!;
+	createAnswer(Ciudad, Precio, NumberRandom, Chatbot, Answer), !;
+
 	%% write("Hola"),
 	negacion(String),
 	nth0(3, Chatbot, Negations),
@@ -159,12 +175,26 @@ determineAnswer(String, Chatbot, NumberRandom, Answer):-
 	NegationsPosition is NumberRandom mod NegationsLength,
 	nth0(NegationsPosition, Negations, Response1),
 	crearMensaje("Bot", Response1, Answer), !;
+
 	afirmacion(String),
 	nth0(4, Chatbot, Affirmations),
 	length(Affirmations, AffirmationsLength),
 	AffirmationsPosition is NumberRandom mod AffirmationsLength,
 	nth0(AffirmationsPosition, Affirmations, Response2),
-	crearMensaje("Bot", Response2, Answer), !.
+	crearMensaje("Bot", Response2, Answer), !;
+
+	reverse(CurrentLog, ReversedCurrentLog),
+	nth0(2, ReversedCurrentLog, VerifyIfIsTag),
+	intersection(VerifyIfIsTag, ["BeginDialog"], ListWithIntersection),
+	length(ListWithIntersection, LengthOfListWithIntersection),
+	LengthOfListWithIntersection = 1,
+	answerToName(String, Chatbot, NumberRandom, Answer),!;
+
+	didntUnderstood(Chatbot, NumberRandom, Answer), !.
+
+
+
+
 
 beginDialog(Chatbot, InputLog, Seed, OutputLog):-
 	chatbot(Chatbot),
@@ -215,7 +245,7 @@ sendMessage(Msg, Chatbot, InputLog, Seed, OutputLog):-
 	%% isMessage(Result2),
 	%% write(Result2),
 	messageToLog(InputLog, Result2, ModifiedLog2), 
-	determineAnswer(Msg, Chatbot, NumberRandom, Answer2),
+	determineAnswer(Msg, Chatbot, NumberRandom, ModifiedLog2, Answer2),
 	%% write(Answer2),
 	messageToLog(ModifiedLog2, Answer2, OutputLog).
 
