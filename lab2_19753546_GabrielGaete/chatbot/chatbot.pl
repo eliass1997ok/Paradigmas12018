@@ -29,11 +29,20 @@ negacion("no").
 negacion("No.").
 negacion("no.").
 
-test(Wea):-
-	string(Wea), !;
-	number(Wea).
-
 compareList([Head|Tails], [Head|Tails]).
+
+chatbot( [
+		 ["Hola, mi nombre es Bot, y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?", "Hola, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"], 
+		 [" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte.", " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año."],
+		 [["0", "0"]],
+		 ["¿A qué ciudad entonces te gustaría ir?", "No hay problema, puedes elegir un nuevo destino"],
+		 ["¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web.", "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web"],
+		 [" es un lugar precioso! Los pasajes hacia allá cuestan ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "],
+		 ["Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?", "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?"],
+		 ["Hasta luego, espero haber sido de ayuda en esta oportunidad.", "Hasta la próxima, espero haberte ayudado."]
+		 ]
+		).
+
 createDate(Date):-
 	get_date_time_value(day, DAY),
 	get_date_time_value(month, MONTH),
@@ -43,16 +52,6 @@ createDate(Date):-
 	string_concat(AUX1, AUX2, AUX3),
 	string_concat(AUX3,YEAR, Date).
 	
-chatbot( [
-		 ["Hola, mi nombre es Bot, y estoy aquí para ayudarlo a seleccionar un destino. ¿Me podría decir su nombre?", "Hola, mi nombre es Bot, y si quieres viajar, conmigo debes hablar. ¿Cómo debo llamarte?"], 
-		 [" cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte.", " y bueno, ¿a qué capital regional te gustaría ir? El sur es hermoso en toda época del año."],
-		 [[0, 0]],
-		 ["¿A qué ciudad entonces te gustaría ir?", "No hay problema, puedes elegir un nuevo destino"],
-		 ["¡Perfecto! Ahora, para confirmar pasajes, debe ingresar a nuestro sitio web.", "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web"],
-		 [" es un lugar precioso! Los pasajes hacia allá cuestan ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "],
-		 ["Disculpa, no he logrado entenderte del todo... ¿podrías ser un poco más claro?", "Perdón, pero no he entendido lo que me has dicho... ¿podrías ser un poco más claro?"]
-		 ]
-		).
 
 %% CONSTRUCTOR TDA MENSAJE
 crearMensajeAux(FECHA, AUTOR, MENSAJE, LISTA):- compareList(LISTA, [FECHA, AUTOR, MENSAJE]).
@@ -100,11 +99,6 @@ setContentMessage(Message, Content, NewMessage):-
 messageToLog(CurrentLog, Message, UpdatedLog):-
 	isMessage(Message),
 	append(CurrentLog, [Message], UpdatedLog), !.
-	%% write(UpdatedLog).
-	%% reverse(CurrentLog, ReversedCurrentLog),
-	%% append([], [Message], EncapsulatedMessage),
-	%% append(EncapsulatedMessage, [ReversedCurrentLog], ReversedUpdatedLog),
-	%% reverse(ReversedUpdatedLog, UpdatedLog).
 
 createAnswer(String, Precio, RandomNumber, Chatbot, Answer):-
 	nth0(5, Chatbot, ListAnswersBeforePrice),
@@ -113,10 +107,8 @@ createAnswer(String, Precio, RandomNumber, Chatbot, Answer):-
 	nth0(ListAnswersBeforePricePosition, ListAnswersBeforePrice, BeforePrice),
 	string_concat(String, BeforePrice, ConcatenedWithoutPrice),
 	string_concat(ConcatenedWithoutPrice, Precio, FinalString),
-	crearMensaje("Bot", FinalString, Answer).
-	%% nth0(6, Chatbot, ListAnswersAfterPrice),
-	%% nth0(RandomNumber, ListAnswersAfterPrice, AfterPrice),
-	%% string_concat(ConcatenedUntilPrice, AfterPrice, Answer).
+	string_concat(FinalString, " ¿Desea confirmar su destino?", FinalContent),
+	crearMensaje("Bot", FinalContent, Answer).
 
 %% http://obvcode.blogspot.cl/2008/11/working-with-strings-in-prolog.html
 sublist(S, L) :-
@@ -137,11 +129,8 @@ contains(A, B) :-
   B \= [].
 
 isCityOnMessage(String, City):-
-	%% ( contains(String, Head) -> City = Head ; isCityOnMessage(String, Tails, _) ).
 	capitalRegional(City, _),
 	contains(String, City).
-	%% nth0(0, Tails, Ciudad),
-	%% isCityOnMessage(String, Tails, Ciudad).
 
 answerToName(String, Chatbot, NumberRandom, Answer):-
 	nth0(1, Chatbot, ListOfAnswersWithoutName),
@@ -157,18 +146,11 @@ didntUnderstood(Chatbot, NumberRandom, Answer):-
 	Position is NumberRandom mod LengthOfDontUnderstandings,
 	nth0(Position, ListOfDontUnderstanding, Answer).
 
-
 determineAnswer(String, Chatbot, NumberRandom, CurrentLog, Answer):-
-	%% listadoCapitales(ListaCapitales),
 	isCityOnMessage(String, Ciudad),
-	%% write("acá voy"),
-	%% split_string(String, " ", "", SplitedMessage2),
-	%% intersection(SplitedMessage2, ListaCapitales, [First|_]),
-	%% write(Ciudad), 
 	capitalRegional(Ciudad, Precio),
 	createAnswer(Ciudad, Precio, NumberRandom, Chatbot, Answer), !;
 
-	%% write("Hola"),
 	negacion(String),
 	nth0(3, Chatbot, Negations),
 	length(Negations, NegationsLength),
@@ -192,10 +174,6 @@ determineAnswer(String, Chatbot, NumberRandom, CurrentLog, Answer):-
 
 	didntUnderstood(Chatbot, NumberRandom, Answer), !.
 
-
-
-
-
 beginDialog(Chatbot, InputLog, Seed, OutputLog):-
 	chatbot(Chatbot),
 	nth0(0, Chatbot, Greetings),
@@ -204,50 +182,50 @@ beginDialog(Chatbot, InputLog, Seed, OutputLog):-
 	length(Greetings, GreetingsLength),
 	Position is  NumberRandom mod GreetingsLength,
 	nth0(Position, Greetings, Content),
-	%% IDRatePosition -> SOLO PARA ESTE CASO ES 2!!! FIJARSE EN ESTRUCTURA CHATBOT.
 	nth0(2, Chatbot, ListIDRates),
 	reverse(ListIDRates, ReversedListIDRates),
 	nth0(0, ReversedListIDRates, PairIDRate),
+	nth0(0, PairIDRate, ID),
 	createDate(Date),
-	append(InputLog, [[Date, "BeginDialog", "ID-Rate:", PairIDRate]], BeginDialogLog),
+	append(InputLog, [[Date, "BeginDialog", "ID:", ID]], BeginDialogLog),
 	crearMensaje("Bot", Content, Result),
-
 	messageToLog(BeginDialogLog, Result, OutputLog), !.
 
-%% try(R):-
-%% 	crearMensaje("hola", "sadasd", S),
-%% 	isMessage(S).
-
 sendMessage(Msg, Chatbot, InputLog, Seed, OutputLog):-
-	%% split_string(Msg, " ", "", SplitedMessage),
-	%% length(SplitedMessage, ListSize),
-	%% ListSize = 1,
-	%% string(Msg),
-	%% write("hola mundo"),
-	%% chatbot(Chatbot),
-	%% set_random(seed(Seed)),
-	%% NumberRandom is random(Seed),
-	%% nth0(0, SplitedMessage, String),
-	%% crearMensaje("Usuario", Msg, Result),
-	%% messageToLog(InputLog, Result, ModifiedLog),
-	%% determineAnswer(SplitedMessage, Chatbot, NumberRandom, Answer),
-	%% messageToLog(ModifiedLog, Answer, OutputLog), !;
-	
-	%% length(SplitedMessage2, ListSize2),
-	%% ListSize2 > 1,
-	%% string(Msg),
-	%% write(Msg),
 	chatbot(Chatbot),
 	set_random(seed(Seed)),
 	NumberRandom is random(Seed),
-	%% nth0(0, Capital, String2),
 	crearMensaje("Usuario", Msg, Result2),
-	%% isMessage(Result2),
-	%% write(Result2),
 	messageToLog(InputLog, Result2, ModifiedLog2), 
 	determineAnswer(Msg, Chatbot, NumberRandom, ModifiedLog2, Answer2),
-	%% write(Answer2),
 	messageToLog(ModifiedLog2, Answer2, OutputLog).
+
+endDialog(Chatbot, InputLog, Seed, OutputLog):-
+	chatbot(Chatbot),
+	nth0(7, Chatbot, GoodbyeList),
+	set_random(seed(Seed)),
+	NumberRandom is random(Seed),
+	length(GoodbyeList, LengthGoodbyeList),
+	Position is NumberRandom mod LengthGoodbyeList,
+	nth0(Position, GoodbyeList, GoodbyeText),
+	crearMensaje("Bot", GoodbyeText, GoodbyeMessage),
+	messageToLog(InputLog, GoodbyeMessage, ModifiedLog),
+	nth0(2, Chatbot, ListIDRates),
+	reverse(ListIDRates, ReversedListIDRates),
+	nth0(0, ReversedListIDRates, PairIDRate),
+	nth0(0, PairIDRate, ID),
+	createDate(Date),
+	append(ModifiedLog, [[Date, "EndDialog", "ID", ID]], OutputLog).
+
+listToString([], FinalString, FinalString).
+listToString([Head|Tails], InitialString, FinalString):-
+	string_concat(InitialString, " ", StringAux),
+	string_concat(StringAux, Head, String),
+	listToString(Tails, String, FinalString).
+
+
+%% logToStr(Log, StrRep):-
+
 
 %% COMIENZO LABORATORIO.
 
