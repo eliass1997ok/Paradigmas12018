@@ -29,6 +29,10 @@ negacion("no").
 negacion("No.").
 negacion("no.").
 
+head([Head|_], Head).
+
+tails([_|Tails], Tails).
+
 compareList([Head|Tails], [Head|Tails]).
 
 chatbot( [
@@ -51,7 +55,20 @@ createDate(Date):-
 	string_concat(MONTH, "/", AUX2),
 	string_concat(AUX1, AUX2, AUX3),
 	string_concat(AUX3,YEAR, Date).
-	
+
+listToString([], FinalString, FinalString):-!.
+listToString([Head|Tails], InitialString, FinalString):-
+	string_concat(InitialString, " ", StringAux),
+	string_concat(StringAux, Head, String),
+	listToString(Tails, String, FinalString).
+
+logToStrAux([], StrRep, StrRep):-!.
+logToStrAux(Log, InitialString, StrRep):-
+	head(Log, Head),
+	tails(Log, Tails),
+	listToString(Head, "", ElementString),
+	string_concat(InitialString, ElementString, ConcatenedString),
+	logToStrAux(Tails, ConcatenedString, StrRep).	
 
 %% CONSTRUCTOR TDA MENSAJE
 crearMensajeAux(FECHA, AUTOR, MENSAJE, LISTA):- compareList(LISTA, [FECHA, AUTOR, MENSAJE]).
@@ -108,7 +125,7 @@ createAnswer(String, Precio, RandomNumber, Chatbot, Answer):-
 	string_concat(String, BeforePrice, ConcatenedWithoutPrice),
 	string_concat(ConcatenedWithoutPrice, Precio, FinalString),
 	string_concat(FinalString, " ¿Desea confirmar su destino?", FinalContent),
-	crearMensaje("Bot", FinalContent, Answer).
+	crearMensaje("Bot:", FinalContent, Answer).
 
 %% http://obvcode.blogspot.cl/2008/11/working-with-strings-in-prolog.html
 sublist(S, L) :-
@@ -138,7 +155,7 @@ answerToName(String, Chatbot, NumberRandom, Answer):-
 	Position is NumberRandom mod LengthListOfAnswersWithoutName,
 	nth0(Position, ListOfAnswersWithoutName, MessageSelected),
 	string_concat(String, MessageSelected, ContentOfMessage),
-	crearMensaje("Bot", ContentOfMessage, Answer).
+	crearMensaje("Bot:", ContentOfMessage, Answer).
 
 didntUnderstood(Chatbot, NumberRandom, Answer):-
 	nth0(6, Chatbot, ListOfDontUnderstanding),
@@ -156,14 +173,14 @@ determineAnswer(String, Chatbot, NumberRandom, CurrentLog, Answer):-
 	length(Negations, NegationsLength),
 	NegationsPosition is NumberRandom mod NegationsLength,
 	nth0(NegationsPosition, Negations, Response1),
-	crearMensaje("Bot", Response1, Answer), !;
+	crearMensaje("Bot:", Response1, Answer), !;
 
 	afirmacion(String),
 	nth0(4, Chatbot, Affirmations),
 	length(Affirmations, AffirmationsLength),
 	AffirmationsPosition is NumberRandom mod AffirmationsLength,
 	nth0(AffirmationsPosition, Affirmations, Response2),
-	crearMensaje("Bot", Response2, Answer), !;
+	crearMensaje("Bot:", Response2, Answer), !;
 
 	reverse(CurrentLog, ReversedCurrentLog),
 	nth0(2, ReversedCurrentLog, VerifyIfIsTag),
@@ -188,14 +205,14 @@ beginDialog(Chatbot, InputLog, Seed, OutputLog):-
 	nth0(0, PairIDRate, ID),
 	createDate(Date),
 	append(InputLog, [[Date, "BeginDialog", "ID:", ID]], BeginDialogLog),
-	crearMensaje("Bot", Content, Result),
+	crearMensaje("Bot:", Content, Result),
 	messageToLog(BeginDialogLog, Result, OutputLog), !.
 
 sendMessage(Msg, Chatbot, InputLog, Seed, OutputLog):-
 	chatbot(Chatbot),
 	set_random(seed(Seed)),
 	NumberRandom is random(Seed),
-	crearMensaje("Usuario", Msg, Result2),
+	crearMensaje("Usuario:", Msg, Result2),
 	messageToLog(InputLog, Result2, ModifiedLog2), 
 	determineAnswer(Msg, Chatbot, NumberRandom, ModifiedLog2, Answer2),
 	messageToLog(ModifiedLog2, Answer2, OutputLog).
@@ -208,7 +225,7 @@ endDialog(Chatbot, InputLog, Seed, OutputLog):-
 	length(GoodbyeList, LengthGoodbyeList),
 	Position is NumberRandom mod LengthGoodbyeList,
 	nth0(Position, GoodbyeList, GoodbyeText),
-	crearMensaje("Bot", GoodbyeText, GoodbyeMessage),
+	crearMensaje("Bot:", GoodbyeText, GoodbyeMessage),
 	messageToLog(InputLog, GoodbyeMessage, ModifiedLog),
 	nth0(2, Chatbot, ListIDRates),
 	reverse(ListIDRates, ReversedListIDRates),
@@ -217,15 +234,8 @@ endDialog(Chatbot, InputLog, Seed, OutputLog):-
 	createDate(Date),
 	append(ModifiedLog, [[Date, "EndDialog", "ID", ID]], OutputLog).
 
-listToString([], FinalString, FinalString).
-listToString([Head|Tails], InitialString, FinalString):-
-	string_concat(InitialString, " ", StringAux),
-	string_concat(StringAux, Head, String),
-	listToString(Tails, String, FinalString).
-
-
-%% logToStr(Log, StrRep):-
-
+logToStr(Log, StrRep):-
+	logToStrAux(Log, "", StrRep).
 
 %% COMIENZO LABORATORIO.
 
