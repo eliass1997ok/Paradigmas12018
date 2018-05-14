@@ -51,10 +51,18 @@ createDate(Date):-
 	get_date_time_value(day, DAY),
 	get_date_time_value(month, MONTH),
 	get_date_time_value(year, YEAR),
-	string_concat(DAY,"/", AUX1),
+	get_date_time_value(hour, HOUR),
+	get_date_time_value(minute, MINUTE),
+	string_concat("[", DAY, DAYTOCONCAT),
+	string_concat(DAYTOCONCAT,"/", AUX1),
 	string_concat(MONTH, "/", AUX2),
 	string_concat(AUX1, AUX2, AUX3),
-	string_concat(AUX3,YEAR, Date).
+	string_concat(AUX3,YEAR, AUX4),
+	string_concat(AUX4, ", ", AUX5),
+	string_concat(AUX5, HOUR, AUX6),
+	string_concat(AUX6, ":", AUX7),
+	string_concat(AUX7, MINUTE, AUX8),
+	string_concat(AUX8, "]", Date).
 
 listToString([], FinalString, FinalString):-!.
 listToString([Head|Tails], InitialString, FinalString):-
@@ -67,15 +75,21 @@ logToStrAux(Log, InitialString, StrRep):-
 	head(Log, Head),
 	tails(Log, Tails),
 	listToString(Head, "", ElementString),
-	string_concat(InitialString, ElementString, ConcatenedString),
-	logToStrAux(Tails, ConcatenedString, StrRep).	
+	string_concat(InitialString, "\n", ConcatenedString1),
+	string_concat(ConcatenedString1, ElementString, ConcatenedString2),
+	logToStrAux(Tails, ConcatenedString2, StrRep).	
+
+recursiveTest([], Chatbot, InputLog, Seed, FinalLog):-
+	endDialog(Chatbot, InputLog, Seed, FinalLog),!.
+
+recursiveTest([Head|Tails], Chatbot, CurrentLog, Seed, FinalLog):-
+	sendMessage(Head, Chatbot, CurrentLog, Seed, LogToAppend),
+	recursiveTest(Tails, Chatbot, LogToAppend, Seed, FinalLog).
 
 %% CONSTRUCTOR TDA MENSAJE
-crearMensajeAux(FECHA, AUTOR, MENSAJE, LISTA):- compareList(LISTA, [FECHA, AUTOR, MENSAJE]).
-
 crearMensaje(AUTOR, MENSAJE, RESULTADO):- 
 	createDate(FECHA),
-	crearMensajeAux(FECHA, AUTOR, MENSAJE, RESULTADO).
+	compareList([FECHA, AUTOR, MENSAJE], RESULTADO).
 
 %PERTENENCIA TDA MENSAJE
 isMessage([First, Second, Third]):- string(First), string(Second), string(Third).
@@ -237,18 +251,14 @@ endDialog(Chatbot, InputLog, Seed, OutputLog):-
 logToStr(Log, StrRep):-
 	logToStrAux(Log, "", StrRep).
 
-%% COMIENZO LABORATORIO.
+test(User, Chatbot, InputLog, Seed, OutputLog):-
+	chatbot(Chatbot),
+	beginDialog(Chatbot, InputLog, Seed, BeginLog),
+	recursiveTest(User, Chatbot, BeginLog, Seed, OutputLog).
 
-%% Obtener la hora del sistema.
-%% Ejemplos de uso:
-%% ?- get_date_time_value(day, X).
-%% X = 29.
-
-%% ?- get_date_time_value(year, X).
-%% X = 2014.
-
-%% ?- get_date_time_value(date, X).
-%% X = date(2014, 3, 29).
+writeBeautifulLog(Log):-
+	logToStr(Log, S),
+	write(S).
 
 get_date_time_value(Key, Value) :-
     get_time(Stamp),
