@@ -414,6 +414,13 @@ determineAnswer(String, Chatbot, NumberRandom, CurrentLog, Answer):-
 
 	didntUnderstood(Chatbot, NumberRandom, Answer), !.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%                              %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% FUNCIONALIDADES OBLIGATORIAS %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%                              %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %%%
 %% Permite iniciar una conversación con el usuario, estableciendo una bienvenida al chat. Además, agrega un indicador
 %% de inicio de conversación.
@@ -525,7 +532,10 @@ logToStr(Log, StrRep):-
 %% Seed: Corresponde a un número entero, el que permite generar respuestas aleatorias por parte del Chatbot.
 %% OutputLog: Corresponde a una estructura log de salida.
 %%
-%% NOTA IMPORTANTE: 
+%% NOTA IMPORTANTE: Si no se especifica entrada de User, prolog evaluará 3 distintas conversaciones, definidas en 
+%% hechos.pl. Luego de la 3 conversación evaluada, Prolog evaluará a un usuario "vacío", es decir, un usuario que no 
+%% ingresa texto. Por otra parte, a pesar de tener estas definiciones, el usuario final es libre de crear su propio
+%% user, ingresando éste como "parámetro" del predicado.
 %%
 %% Ejemplo:
 %% 		test(User, Chatbot, InputLog, 70, OutputLog).

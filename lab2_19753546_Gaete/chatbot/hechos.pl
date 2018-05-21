@@ -1,19 +1,19 @@
 capitalRegional("Arica", "$32.200 pesos").
 capitalRegional("Iquique", "$30.100 pesos").
 capitalRegional("Antofagasta", "$21.600 pesos").
-capitalRegional("Copiapo", "$15.000 pesos").
+capitalRegional("Copiapó", "$15.000 pesos").
 capitalRegional("La Serena", "$9.100 pesos").
 capitalRegional("Valparaíso", "$6.500 pesos").
 capitalRegional("Rancagua", "$3.000 pesos").
 capitalRegional("Talca", "$6.500 pesos").
-capitalRegional("Concepcion", "$13.900 pesos").
+capitalRegional("Concepción", "$13.900 pesos").
 capitalRegional("Temuco", "$14.900 pesos").
 capitalRegional("Puerto Montt", "$19.900 pesos").
 capitalRegional("Coyhaique", "$33.000 pesos").
 capitalRegional("Punta Arenas", "$15.000 pesos").
 capitalRegional("Valdivia", "$17.900 pesos").
 
-listadoCapitales(["Arica", "Iquique", "Antofagasta", "Copiapo", "La Serena", "Valparaíso", "Rancagua", "Talca", "Concepcion", "Temuco", "Puerto Montt", "Coyhaique", "Punta Arenas", "Valdivia"]).
+listadoCapitales(["Arica", "Iquique", "Antofagasta", "Copiapó", "La Serena", "Valparaíso", "Rancagua", "Talca", "Concepción", "Temuco", "Puerto Montt", "Coyhaique", "Punta Arenas", "Valdivia"]).
 
 afirmacion("Sí").
 afirmacion("sí").
@@ -26,7 +26,7 @@ afirmacion("si.").
 
 user1(["Gabriel", "Me gustaría tomar un viaje hacia La Serena", "No, mejor no, prefiero viajar a Valparaíso", "Sí"]).
 user2(["Diego", "Me gustaría viajar hacia Punta Arenas", "Sí"]).
-user3(["Paloma", "Tengo unas ganas de visitar a mi familia en Arica", "Mejor en otra oportunidad, prefiero viajar a Valdivia primero", "Sí"]).
+user3(["Paloma", "Tengo unas ganas de visitar a mi familia en Arica", "no", "Prefiero viajar a Valdivia primero", "Sí"]).
 
 negacion("No").
 negacion("no").
