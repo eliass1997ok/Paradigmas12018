@@ -68,7 +68,6 @@
 %% 
 %% listToString([], FinalString, FinalString):-!.
 %% logToStrAux([], StrRep, StrRep):-!.
-%% documents([], []).
 %% 
 %% REGLAS:
 %% 
