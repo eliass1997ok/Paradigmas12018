@@ -1,15 +1,17 @@
+import java.util.*;
+
 public class Message{
-	private String date;
+	private Date date;
 	private String autor;
 	private String content;
 
-	public Message(String date, String autor, String content){
+	public Message(Date date, String autor, String content){
 		this.date = date;
 		this.autor = autor;
 		this.content = content;
 	}
 
-	public String getDate(){
+	public Date getDate(){
 		return this.date;
 	}
 
@@ -21,7 +23,7 @@ public class Message{
 		return this.content;
 	}
 
-	public void setDate(String date){
+	public void setDate(Date date){
 		this.date = date;
 	}
 

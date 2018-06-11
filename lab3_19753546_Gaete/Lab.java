@@ -1,4 +1,5 @@
 import java.util.*;
+
 public class Lab{
 
 	public static int determineInstruction(String interaction){
@@ -13,6 +14,7 @@ public class Lab{
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
+		List<Message> log = new ArrayList<Message>();
 		Chatbot chatbot;
 		chatbot = null;
 		int seed;
@@ -36,15 +38,26 @@ public class Lab{
 				}
 				System.out.println("Se ha iniciado correctamente el chat");
 				startedChat = true;
-			}
-			else{
+			} else {
 				System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente.");
 				System.out.print("Usuario [>]: ");
 				beginDialog = sc.nextLine();
 				chatbot = new Chatbot();
 			}
 		}
+		Message greetings = chatbot.greetings();
+		log.add(greetings);
 
-		System.out.println(chatbot.getSeed());
+		System.out.print("Usuario [>]: ");
+		String name = sc.nextLine();
+
+		Message nameMessage = new Message(new Date(), "Usuario", name);
+		log.add(nameMessage);
+
+		User user = new User(name);
+		Chat chat = new Chat(chatbot, user, log);
+
+		// chat.keepTalking();
+
 	}
 }
