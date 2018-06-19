@@ -7,6 +7,8 @@ public class Lab{
 
 		if (instruction[1].compareTo("beginDialog") == 0){
 			return 1;
+		} else if (instruction[1].compareTo("endDialog") == 0){
+			return 9;
 		}
 
 		return -1;
@@ -16,48 +18,59 @@ public class Lab{
 		Scanner sc = new Scanner(System.in);
 		List<Message> log = new ArrayList<Message>();
 		Chatbot chatbot;
+		User user;
+		Chat chat;
+		user = null;
+		chat = null;
 		chatbot = null;
 		int seed;
 
 		System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
-		System.out.print("Usuario [>] ");
 
-		String beginDialog = sc.nextLine();
-		String[] splitedString = beginDialog.split(" ");
+		boolean endedDialog = false;
 
-		boolean startedChat = false;
+		while (! endedDialog){
+			System.out.print("Usuario [>]: ");
+			String userEntry = sc.nextLine();
+			String[] splitedString = userEntry.split(" ");
 
-		while (! startedChat){
-			splitedString = beginDialog.split(" ");
+			if (chatbot == null && chat == null && user == null){ // Se comprueba si lo ingresado corresponde a una instrucción.
+				if (splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
+					if (splitedString.length == 1){
+							chatbot = new Chatbot();
 
-			if (splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
-				if (splitedString.length == 1){
-					chatbot = new Chatbot();
+						} else {
+							chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+						}
+
+						System.out.println("Se ha iniciado correctamente el chat");
+
+						Message greetings = chatbot.greetings();
+						log.add(greetings);
+
+						System.out.print("Usuario [>]: ");
+						String name = sc.nextLine();
+
+						Message nameMessage = new Message(new Date(), "Usuario", name);
+						log.add(nameMessage);
+
+						user = new User(name);
+						chat = new Chat(chatbot, user, log);
+						
+
 				} else {
-					chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+					System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente.");
+					// System.out.print("Usuario [>]: ");
+					// userEntry = sc.nextLine();	
 				}
-				System.out.println("Se ha iniciado correctamente el chat");
-				startedChat = true;
+
 			} else {
-				System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente.");
-				System.out.print("Usuario [>]: ");
-				beginDialog = sc.nextLine();
-				chatbot = new Chatbot();
+				if (splitedString[0].charAt(0) == '!'){
+					if (determineInstruction(splitedString[0]) == 9){ // Se determina el tipo de instrucción que se ha ingresado. Cambiar a switch/case
+						endedDialog = true;
+					} //Por cada nueva instrucción que se quiera realizar, determinar si existe chat.
+				}
 			}
 		}
-		Message greetings = chatbot.greetings();
-		log.add(greetings);
-
-		System.out.print("Usuario [>]: ");
-		String name = sc.nextLine();
-
-		Message nameMessage = new Message(new Date(), "Usuario", name);
-		log.add(nameMessage);
-
-		User user = new User(name);
-		Chat chat = new Chat(chatbot, user, log);
-
-		// chat.keepTalking();
-
 	}
 }
