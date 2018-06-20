@@ -1,4 +1,6 @@
 import java.util.*;
+import java.lang.*;
+import java.text.*;
 
 public class Message{
 	private Date date;
@@ -33,5 +35,11 @@ public class Message{
 
 	public void setContent(String content){
 		this.content = content;
+	}
+
+	public String toString(){
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+		return "[" + df.format(this.date) + "] " + this.autor + ": " + this.content;
 	}
 }

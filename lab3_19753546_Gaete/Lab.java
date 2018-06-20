@@ -18,23 +18,24 @@ public class Lab{
 		Scanner sc = new Scanner(System.in);
 		List<Message> log = new ArrayList<Message>();
 		Chatbot chatbot;
-		User user;
-		Chat chat;
-		user = null;
-		chat = null;
+		// Chat chat;
+		User user = new User();
+		// chat = null;
 		chatbot = null;
 		int seed;
 
 		System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
 
 		boolean endedDialog = false;
+		boolean startedDialog = false;
 
 		while (! endedDialog){
-			System.out.print("Usuario [>]: ");
-			String userEntry = sc.nextLine();
-			String[] splitedString = userEntry.split(" ");
+			Message msg = user.sendMessage();
+			String[] splitedString = msg.getContent().split(" ");
 
-			if (chatbot == null && chat == null && user == null){ // Se comprueba si lo ingresado corresponde a una instrucción.
+			if (startedDialog) log.add(msg);
+
+			if (chatbot == null /*&& chat == null && user == null*/){ // Se comprueba si lo ingresado corresponde a una instrucción.
 				if (splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
 					if (splitedString.length == 1){
 							chatbot = new Chatbot();
@@ -50,12 +51,14 @@ public class Lab{
 
 						System.out.print("Usuario [>]: ");
 						String name = sc.nextLine();
+						user.setName(name);
 
 						Message nameMessage = new Message(new Date(), "Usuario", name);
 						log.add(nameMessage);
+						startedDialog = true;
 
-						user = new User(name);
-						chat = new Chat(chatbot, user, log);
+						// user = new User(name);
+						// chat = new Chat(chatbot, user, log);
 						
 
 				} else {
@@ -66,11 +69,45 @@ public class Lab{
 
 			} else {
 				if (splitedString[0].charAt(0) == '!'){
-					if (determineInstruction(splitedString[0]) == 9){ // Se determina el tipo de instrucción que se ha ingresado. Cambiar a switch/case
-						endedDialog = true;
-					} //Por cada nueva instrucción que se quiera realizar, determinar si existe chat.
+					switch(determineInstruction(splitedString[0])){
+						case(1):
+							if (splitedString.length == 1){
+								chatbot = new Chatbot();
+
+							} else {
+								chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+							}
+
+							System.out.println("Se ha iniciado correctamente el chat");
+
+							log.clear();
+
+							Message greetings = chatbot.greetings();
+							log.add(greetings);
+
+							System.out.print("Usuario [>]: ");
+							String name = sc.nextLine();
+
+							Message nameMessage = new Message(new Date(), "Usuario", name);
+							log.add(nameMessage);
+
+							// user = new User(name);
+							// chat = new Chat(chatbot, user, log);
+							break;
+
+						case(9):
+							endedDialog = true;
+							break;
+
+						default:
+							System.out.println("\nSistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.\n");
+					}					
 				}
 			}
+		}
+
+		for (Message msg : log) {
+			System.out.println(msg.toString());			
 		}
 	}
 }
