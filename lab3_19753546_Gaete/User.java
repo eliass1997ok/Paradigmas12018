@@ -2,9 +2,13 @@ import java.util.*;
 public class User{
 	private String name;
 
+	public User(){
+		this.name = "Usuario";
+	}
+
 	public Message sendMessage(){
 		Scanner sc = new Scanner(System.in);
-		System.out.print("Usuario [>]: ");
+		System.out.print(this.name + " [>]: ");
 		String userEntry = sc.nextLine();
 
 		while (userEntry.length() == 0){

@@ -7,6 +7,12 @@ public class Lab{
 
 		if (instruction[1].compareTo("beginDialog") == 0){
 			return 1;
+		} else if (instruction[1].compareTo("saveLog") == 0){
+			return 2;
+		} else if (instruction[1].compareTo("loadLog") == 0){
+			return 3;
+		} else if (instruction[1].compareTo("rate") == 0){
+			return 4;
 		} else if (instruction[1].compareTo("endDialog") == 0){
 			return 9;
 		}
@@ -18,10 +24,8 @@ public class Lab{
 		Scanner sc = new Scanner(System.in);
 		List<Message> log = new ArrayList<Message>();
 		Chatbot chatbot;
-		// Chat chat;
-		User user = new User();
-		// chat = null;
 		chatbot = null;
+		User user = new User();		
 		int seed;
 
 		System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
@@ -35,7 +39,7 @@ public class Lab{
 
 			if (startedDialog) log.add(msg);
 
-			if (chatbot == null /*&& chat == null && user == null*/){ // Se comprueba si lo ingresado corresponde a una instrucción.
+			if (chatbot == null){
 				if (splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
 					if (splitedString.length == 1){
 							chatbot = new Chatbot();
@@ -55,28 +59,21 @@ public class Lab{
 
 						Message nameMessage = new Message(new Date(), "Usuario", name);
 						log.add(nameMessage);
-						startedDialog = true;
-
-						// user = new User(name);
-						// chat = new Chat(chatbot, user, log);
-						
+						chatbot.determineAnswer(log, nameMessage.getContent());
+						startedDialog = true;						
 
 				} else {
-					System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente.");
-					// System.out.print("Usuario [>]: ");
-					// userEntry = sc.nextLine();	
+					System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente.");	
 				}
 
 			} else {
 				if (splitedString[0].charAt(0) == '!'){
 					switch(determineInstruction(splitedString[0])){
 						case(1):
-							if (splitedString.length == 1){
+							if (splitedString.length == 1)
 								chatbot = new Chatbot();
-
-							} else {
+							else 
 								chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
-							}
 
 							System.out.println("Se ha iniciado correctamente el chat");
 
@@ -87,12 +84,11 @@ public class Lab{
 
 							System.out.print("Usuario [>]: ");
 							String name = sc.nextLine();
+							user.setName(name);
 
 							Message nameMessage = new Message(new Date(), "Usuario", name);
 							log.add(nameMessage);
 
-							// user = new User(name);
-							// chat = new Chat(chatbot, user, log);
 							break;
 
 						case(9):
@@ -102,6 +98,8 @@ public class Lab{
 						default:
 							System.out.println("\nSistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.\n");
 					}					
+				} else {
+					chatbot.determineAnswer(log, msg.getContent());
 				}
 			}
 		}
