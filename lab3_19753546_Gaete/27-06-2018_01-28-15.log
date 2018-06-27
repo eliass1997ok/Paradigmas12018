@@ -1,0 +1,10 @@
+[27/06/2018 01:27:38] Usuario: !beginDialog
+[27/06/2018 01:27:38] Chatbot: Hola, bienvenido al chat, ¿cuál es tu nombre?
+[27/06/2018 01:27:43] Usuario: Gabriel Elías
+[27/06/2018 01:27:43] Chatbot: Gabriel Elías cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.
+[27/06/2018 01:27:56] Gabriel Elías: me gustaría viajar a la ciudad de punta arenas
+[27/06/2018 01:27:56] Chatbot: Punta Arenas  es un lugar ideal en ésta época del año!. Te cuento que los pasajes tienen un valor de  $15.000 pesos ¿Deseas confirmar esos pasajes?
+[27/06/2018 01:28:05] Gabriel Elías: sí, quiero confirmar esos pasajes
+[27/06/2018 01:28:05] Chatbot: Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web
+[27/06/2018 01:28:11] Gabriel Elías: !rate 5 5
+[27/06/2018 01:28:15] Gabriel Elías: !saveLog

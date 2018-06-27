@@ -1,4 +1,7 @@
 import java.util.*;
+import java.io.*;
+import java.lang.*;
+import java.text.*;
 
 public class Lab{
 
@@ -25,7 +28,7 @@ public class Lab{
 		List<Message> log = new ArrayList<Message>();
 		Chatbot chatbot;
 		chatbot = null;
-		User user = new User();		
+		Usuario user = new Usuario();		
 		int seed;
 
 		System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
@@ -50,6 +53,7 @@ public class Lab{
 
 						System.out.println("Se ha iniciado correctamente el chat");
 
+						log.add(new Message(new Date(), "Usuario", msg.getContent()));
 						Message greetings = chatbot.greetings();
 						log.add(greetings);
 
@@ -59,7 +63,8 @@ public class Lab{
 
 						Message nameMessage = new Message(new Date(), "Usuario", name);
 						log.add(nameMessage);
-						chatbot.determineAnswer(log, nameMessage.getContent());
+						Message answer = chatbot.determineAnswer(log, nameMessage.getContent());
+						log.add(answer);
 						startedDialog = true;						
 
 				} else {
@@ -78,6 +83,7 @@ public class Lab{
 							System.out.println("Se ha iniciado correctamente el chat");
 
 							log.clear();
+							log.add(new Message(new Date(), "Usuario", msg.getContent()));
 
 							Message greetings = chatbot.greetings();
 							log.add(greetings);
@@ -87,25 +93,58 @@ public class Lab{
 							user.setName(name);
 
 							Message nameMessage = new Message(new Date(), "Usuario", name);
-							log.add(nameMessage);
 
+							break;
+
+						case(2):
+							Date date = new Date();
+							DateFormat df = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+							String fileName = df.format(date);
+							fileName = fileName + ".log";
+
+							try {
+								PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+								for (Message messageInLog : log){
+									writer.write(messageInLog.toString() + "\n");
+								}
+
+								writer.close();
+
+								System.out.println("Sistema [!]: Archivo log generado satisfactoriamente.");
+							}
+					        catch(Exception e){
+								e.printStackTrace();
+							}
+							break;
+
+						case(4):
+							if (splitedString.length != 3){
+								System.out.println("Sistema [!]: A la instrucción especificada le falta un parámetro. Por favor ingrese nuevamente.");
+							} else {
+								DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+								Date dateToRate = new Date();
+								String strDate = dateFormat.format(dateToRate);
+								chatbot.setRate(strDate + splitedString[1]);
+								user.setRate(strDate + splitedString[2]);
+
+							}
 							break;
 
 						case(9):
 							endedDialog = true;
+							Message goodbye = chatbot.goodbye();
+							log.add(goodbye);
 							break;
 
 						default:
-							System.out.println("\nSistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.\n");
+							System.out.println("Sistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.");
 					}					
 				} else {
-					chatbot.determineAnswer(log, msg.getContent());
+					Message answerOfChatbot = chatbot.determineAnswer(log, msg.getContent());
+					
+					log.add(answerOfChatbot);
 				}
 			}
-		}
-
-		for (Message msg : log) {
-			System.out.println(msg.toString());			
 		}
 	}
 }

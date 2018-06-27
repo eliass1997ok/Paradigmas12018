@@ -1,8 +1,9 @@
 import java.util.*;
-public class User{
+public class Usuario{
 	private String name;
+	private String rate;
 
-	public User(){
+	public Usuario(){
 		this.name = "Usuario";
 	}
 
@@ -26,7 +27,7 @@ public class User{
 		this.name = name;
 	}
 
-	// public Message createMessage(String content){
-	// 	Date date = new Date();
-	// } 
+	public void setRate(String rate){
+		this.rate = rate;
+	}
 }
