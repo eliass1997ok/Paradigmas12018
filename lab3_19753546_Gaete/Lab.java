@@ -23,7 +23,7 @@ public class Lab{
 		return -1;
 	}
 
-	public static void main(String[] args) {
+	public static void run() {
 		Scanner sc = new Scanner(System.in);
 		List<Message> log = new ArrayList<Message>();
 		Chatbot chatbot;
