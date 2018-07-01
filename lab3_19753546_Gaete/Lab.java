@@ -3,148 +3,172 @@ import java.io.*;
 import java.lang.*;
 import java.text.*;
 
+/**
+* La clase Lab permite la interacción entre usuario y chatbot. Es en esta clase en donde se almacena el log de la 
+* conversación, se instancia al usuario, y al respectivo chatbot.
+*
+* @version 1.0
+* @since 1.0
+*/
+
 public class Lab{
 
-	public static int determineInstruction(String interaction){
-		String[] instruction = interaction.split("!");
+    /**
+    * Método que permite la identificación de una instrucción ingresada por el usuario. 
+    *
+    * @param interaction corresponde a la instrucción ingresada por el usuario.
+    *
+    * @return número entero que identifica a la instrucción ingresada. En caso de ingresar una instrucción no válida, se 
+    * retorna un valor negativo, identificador especial para estos casos.
+    *
+    */
 
-		if (instruction[1].compareTo("beginDialog") == 0){
-			return 1;
-		} else if (instruction[1].compareTo("saveLog") == 0){
-			return 2;
-		} else if (instruction[1].compareTo("loadLog") == 0){
-			return 3;
-		} else if (instruction[1].compareTo("rate") == 0){
-			return 4;
-		} else if (instruction[1].compareTo("endDialog") == 0){
-			return 9;
-		}
+    public static int determineInstruction(String interaction){
+        String[] instruction = interaction.split("!");
 
-		return -1;
-	}
+        if (instruction[1].compareTo("beginDialog") == 0){
+            return 1;
+        } else if (instruction[1].compareTo("saveLog") == 0){
+            return 2;
+        } else if (instruction[1].compareTo("loadLog") == 0){
+            return 3;
+        } else if (instruction[1].compareTo("rate") == 0){
+            return 4;
+        } else if (instruction[1].compareTo("endDialog") == 0){
+            return 9;
+        }
 
-	public static void run() {
-		Scanner sc = new Scanner(System.in);
-		List<Message> log = new ArrayList<Message>();
-		Chatbot chatbot;
-		chatbot = null;
-		Usuario user = new Usuario();		
-		int seed;
+        return -1;
+    }
 
-		System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
+    /**
+    * Método que permite iniciar el programa, es decir, se da la bienvenida al sistema, y comienza la interacción entre
+    * usuario y chatbot.
+    *
+    */    
 
-		boolean endedDialog = false;
-		boolean startedDialog = false;
+    public static void run() {
+        Scanner sc = new Scanner(System.in);
+        List<Message> log = new ArrayList<Message>();
+        Chatbot chatbot;
+        chatbot = null;
+        Usuario user = new Usuario();       
+        int seed;
 
-		while (! endedDialog){
-			Message msg = user.sendMessage();
-			String[] splitedString = msg.getContent().split(" ");
+        System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
 
-			if (startedDialog) log.add(msg);
+        boolean endedDialog = false;
+        boolean startedDialog = false;
 
-			if (chatbot == null){
-				if (splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
-					if (splitedString.length == 1){
-							chatbot = new Chatbot();
+        while (! endedDialog){
+            Message msg = user.sendMessage();
+            String[] splitedString = msg.getContent().split(" ");
 
-						} else {
-							chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
-						}
+            if (startedDialog) log.add(msg);
 
-						System.out.println("Se ha iniciado correctamente el chat");
+            if (chatbot == null){
+                if (splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
+                    if (splitedString.length == 1){
+                            chatbot = new Chatbot();
 
-						log.add(new Message(new Date(), "Usuario", msg.getContent()));
-						Message greetings = chatbot.greetings();
-						log.add(greetings);
+                        } else {
+                            chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+                        }
 
-						System.out.print("Usuario [>]: ");
-						String name = sc.nextLine();
-						user.setName(name);
+                        System.out.println("Se ha iniciado correctamente el chat");
 
-						Message nameMessage = new Message(new Date(), "Usuario", name);
-						log.add(nameMessage);
-						Message answer = chatbot.determineAnswer(log, nameMessage.getContent());
-						log.add(answer);
-						startedDialog = true;						
+                        log.add(new Message(new Date(), "Usuario", msg.getContent()));
+                        Message greetings = chatbot.greetings();
+                        log.add(greetings);
 
-				} else {
-					System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente.");	
-				}
+                        System.out.print("Usuario [>]: ");
+                        String name = sc.nextLine();
+                        user.setName(name);
 
-			} else {
-				if (splitedString[0].charAt(0) == '!'){
-					switch(determineInstruction(splitedString[0])){
-						case(1):
-							if (splitedString.length == 1)
-								chatbot = new Chatbot();
-							else 
-								chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+                        Message nameMessage = new Message(new Date(), "Usuario", name);
+                        log.add(nameMessage);
+                        Message answer = chatbot.determineAnswer(log, nameMessage.getContent());
+                        log.add(answer);
+                        startedDialog = true;                       
 
-							System.out.println("Se ha iniciado correctamente el chat");
+                } else {
+                    System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente."); 
+                }
 
-							log.clear();
-							log.add(new Message(new Date(), "Usuario", msg.getContent()));
+            } else {
+                if (splitedString[0].charAt(0) == '!'){
+                    switch(determineInstruction(splitedString[0])){
+                        case(1):
+                            if (splitedString.length == 1)
+                                chatbot = new Chatbot();
+                            else 
+                                chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
 
-							Message greetings = chatbot.greetings();
-							log.add(greetings);
+                            System.out.println("Se ha iniciado correctamente el chat");
 
-							System.out.print("Usuario [>]: ");
-							String name = sc.nextLine();
-							user.setName(name);
+                            log.clear();
+                            log.add(new Message(new Date(), "Usuario", msg.getContent()));
 
-							Message nameMessage = new Message(new Date(), "Usuario", name);
+                            Message greetings = chatbot.greetings();
+                            log.add(greetings);
 
-							break;
+                            System.out.print("Usuario [>]: ");
+                            String name = sc.nextLine();
+                            user.setName(name);
 
-						case(2):
-							Date date = new Date();
-							DateFormat df = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-							String fileName = df.format(date);
-							fileName = fileName + ".log";
+                            Message nameMessage = new Message(new Date(), "Usuario", name);
 
-							try {
-								PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-								for (Message messageInLog : log){
-									writer.write(messageInLog.toString() + "\n");
-								}
+                            break;
 
-								writer.close();
+                        case(2):
+                            Date date = new Date();
+                            DateFormat df = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+                            String fileName = df.format(date);
+                            fileName = fileName + ".log";
 
-								System.out.println("Sistema [!]: Archivo log generado satisfactoriamente.");
-							}
-					        catch(Exception e){
-								e.printStackTrace();
-							}
-							break;
+                            try {
+                                PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+                                for (Message messageInLog : log){
+                                    writer.write(messageInLog.toString() + "\n");
+                                }
 
-						case(4):
-							if (splitedString.length != 3){
-								System.out.println("Sistema [!]: A la instrucción especificada le falta un parámetro. Por favor ingrese nuevamente.");
-							} else {
-								DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-								Date dateToRate = new Date();
-								String strDate = dateFormat.format(dateToRate);
-								chatbot.setRate(strDate + splitedString[1]);
-								user.setRate(strDate + splitedString[2]);
+                                writer.close();
 
-							}
-							break;
+                                System.out.println("Sistema [!]: Archivo log generado satisfactoriamente.");
+                            }
+                            catch(Exception e){
+                                e.printStackTrace();
+                            }
+                            break;
 
-						case(9):
-							endedDialog = true;
-							Message goodbye = chatbot.goodbye();
-							log.add(goodbye);
-							break;
+                        case(4):
+                            if (splitedString.length != 3){
+                                System.out.println("Sistema [!]: A la instrucción especificada le falta un parámetro. Por favor ingrese nuevamente.");
+                            } else {
+                                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                Date dateToRate = new Date();
+                                String strDate = dateFormat.format(dateToRate);
+                                chatbot.setRate(strDate + splitedString[1]);
+                                user.setRate(strDate + splitedString[2]);
 
-						default:
-							System.out.println("Sistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.");
-					}					
-				} else {
-					Message answerOfChatbot = chatbot.determineAnswer(log, msg.getContent());
-					
-					log.add(answerOfChatbot);
-				}
-			}
-		}
-	}
+                            }
+                            break;
+
+                        case(9):
+                            endedDialog = true;
+                            Message goodbye = chatbot.goodbye();
+                            log.add(goodbye);
+                            break;
+
+                        default:
+                            System.out.println("Sistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.");
+                    }                   
+                } else {
+                    Message answerOfChatbot = chatbot.determineAnswer(log, msg.getContent());
+                    
+                    log.add(answerOfChatbot);
+                }
+            }
+        }
+    }
 }

@@ -1,178 +1,228 @@
 import java.util.*;
 
+/**
+* La clase Chatbot corresponde, como su nombre indica, al chatbot en si. Este es el encargado de entregar respuestas
+* automáticas al usuario en base a un reconocimiento de palabras clave dentro del los mensajes enviados por el usuario.
+* El chatbot cuenta con dos personalidades. Una de estas es una personalidad agradable/formal (siendo posible elegirla 
+* a través de la utilización de una semilla par, o no entregando semilla, puesto que es la personalidad por defecto),
+* mientras que la otra personalidad es agradable/divertida, y un poco más informal (seleccionable mediante la utilización
+* de una semilla impar). La semilla por otra parte, le agrega aleatoriedad a las respuestas que entrega el chatbot frente
+* a diversas situaciones.
+*
+* @version 1.0
+* @since 1.0
+*/
+
 public class Chatbot{
-	private List<List<List<String>>> responses;
-	private int seed;
-	private Random generator;
-	private boolean confirmed;
-	private String rate;
+    private List<List<List<String>>> responses;
+    private int seed;
+    private Random generator;
+    private boolean confirmed;
+    private String rate;
 
-	public Chatbot(){
-		this.seed = 0;
-		this.generator = new Random(this.seed);
-		this.confirmed = false;
-		this.rate = null;
-		this.responses = Arrays.asList( Arrays.asList(//Personalidad 1;
-										              Arrays.asList("Hola, bienvenido al chat, ¿cuál es tu nombre?", "Buenos días, ¿cuál es su nombre?"), //Respuestas bienvenida
-										              Arrays.asList("cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."),
-										              Arrays.asList(" es un lugar ideal en ésta época del año!. Te cuento que los pasajes tienen un valor de ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "),
-										              Arrays.asList("Excelente. Ahora sólo debes confirmar tus datos y pasajes en nuestra página web.", "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web"),
-										              Arrays.asList("Entonces, ¿a qué lugar te gustaría viajar?", "Entonces, ¿podrías decirme un destino al que te gustaría ir?"),
-										              Arrays.asList("Disculpa, no he logrado entenderte del todo. ¿Podrías ser un poco más claro?", "No te he logrado entender lo que me has dicho. ¿Podrías ser más claro?"),
-										              Arrays.asList("Adiós, espero haber sido de ayuda.", "¡Nos vemos! Espero que disfrutes tu viaje.")
-													  ),
-										Arrays.asList(//Personalidad 2;
-													  Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?") //Respuestas bienvenida
-											         )
-										);
-	}
+    /**
+    * Constructor que permite la instanciación de un chatbot con la personalidad por defecto. Para utilizar los mismos 
+    * algoritmos, independiente del constructor, es que de todas formas se establecen las dos personalidades, a pesar de 
+    * necesitar solo una.
+    *
+    */
 
-	public Chatbot(int seed){
-		this.seed = seed % 2;
-		this.generator = new Random(seed);
-		this.confirmed = false;
-		this.responses = Arrays.asList( Arrays.asList(//Personalidad 1;
-										              Arrays.asList("Hola, bienvenido al chat, ¿cuál es tu nombre?", "Buenos días, ¿cuál es su nombre?"), //Respuestas bienvenida
-										              Arrays.asList("cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."),
-										              Arrays.asList(" es un lugar ideal en ésta época del año!. Te cuento que los pasajes tienen un valor de ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "),
-										              Arrays.asList("Excelente. Ahora sólo debes confirmar tus datos y pasajes en nuestra página web.", "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web"),
-										              Arrays.asList("Entonces, ¿a qué lugar te gustaría viajar?", "Entonces, ¿podrías decirme un destino al que te gustaría ir?"),
-										              Arrays.asList("Disculpa, no he logrado entenderte del todo. ¿Podrías ser un poco más claro?", "No te he logrado entender lo que me has dicho. ¿Podrías ser más claro?"),
-										              Arrays.asList("Adiós, espero haber sido de ayuda.", "¡Nos vemos! Espero que disfrutes tu viaje.")
-													  ),
-										Arrays.asList(//Personalidad 2;
-													  Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?") //Respuestas bienvenida
-											         )
-										);
-	}
+    public Chatbot(){
+        this.seed = 0;
+        this.generator = new Random(this.seed);
+        this.confirmed = false;
+        this.rate = null;
+        this.responses = Arrays.asList( Arrays.asList(
+                                                      Arrays.asList("Hola, bienvenido al chat, ¿cuál es tu nombre?", "Buenos días, ¿cuál es su nombre?"),
+                                                      Arrays.asList("cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."),
+                                                      Arrays.asList(" es un lugar ideal en ésta época del año!. Te cuento que los pasajes tienen un valor de ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "),
+                                                      Arrays.asList("Excelente. Ahora sólo debes confirmar tus datos y pasajes en nuestra página web.", "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web"),
+                                                      Arrays.asList("Entonces, ¿a qué lugar te gustaría viajar?", "Entonces, ¿podrías decirme un destino al que te gustaría ir?"),
+                                                      Arrays.asList("Disculpa, no he logrado entenderte del todo. ¿Podrías ser un poco más claro?", "No te he logrado entender lo que me has dicho. ¿Podrías ser más claro?"),
+                                                      Arrays.asList("Adiós, espero haber sido de ayuda.", "¡Nos vemos! Espero que disfrutes tu viaje.")
+                                                      ),
+                                        Arrays.asList(
+                                                      Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?")
+                                                     )
+                                        );
+    }
 
-	public List<String> intersect(String str){
-		List<List<String>> cities = Arrays.asList(Arrays.asList("Arica", "$32.200 pesos."), Arrays.asList("Iquique", "$30.100 pesos"), Arrays.asList("Antofagasta", "$21.600 pesos"), Arrays.asList("Copiapó", "$15.000 pesos"), Arrays.asList("La Serena", "$9.100 pesos"), Arrays.asList("Valparaíso", "$6.500 pesos"), Arrays.asList("Rancagua", "$3.000 pesos"), Arrays.asList("Talca", "$6.500 pesos"), Arrays.asList("Concepción", "$13.900 pesos"), Arrays.asList("Temuco", "$14.900 pesos"), Arrays.asList("Puerto Montt", "$19.900 pesos"), Arrays.asList("Coyhaique", "$33.000 pesos"), Arrays.asList("Punta Arenas", "$15.000 pesos"), Arrays.asList("Valdivia", "$17.900 pesos"));
-		List<List<String>> positive = Arrays.asList(Arrays.asList("sí"), Arrays.asList("si"));
-		List<String> splittedStr = Arrays.asList(str);
+    /**
+    * Constructor que permite la instanciación de un chatbot con una personalidad elejida por el usuario.
+    *
+    * @param seed correponde al número de semilla que determina la personalidad del chatbot. También le agrega
+    * aleatoriedad a las respuestas dadas por el chatbot frente a determinados mensajes.
+    *
+    */   
 
-		for (List<String> city : cities) {
-			if (str.toLowerCase().contains(city.get(0).toLowerCase())){
-				return city;
-			}
-		}
+    public Chatbot(int seed){
+        this.seed = seed % 2;
+        this.generator = new Random(seed);
+        this.confirmed = false;
+        this.responses = Arrays.asList( Arrays.asList(
+                                                      Arrays.asList("Hola, bienvenido al chat, ¿cuál es tu nombre?", "Buenos días, ¿cuál es su nombre?"),
+                                                      Arrays.asList("cuéntame, ¿a dónde quieres viajar? Recuerda que por el momento sólo ofrecemos viajes a capitales regionales del país.", "¿a qué capital regional deseas viajar? Puedes hacerlo a cualquier región de Chile. Yo te recomiendo el norte."),
+                                                      Arrays.asList(" es un lugar ideal en ésta época del año!. Te cuento que los pasajes tienen un valor de ", " es ideal en esta época del año, no te arrepentirás. Viajar hacia allá cuesta "),
+                                                      Arrays.asList("Excelente. Ahora sólo debes confirmar tus datos y pasajes en nuestra página web.", "Bien, ahora para confirmar la cantidad y la fecha de los pasajes, debe ingresar a nuestro sitio web"),
+                                                      Arrays.asList("Entonces, ¿a qué lugar te gustaría viajar?", "Entonces, ¿podrías decirme un destino al que te gustaría ir?"),
+                                                      Arrays.asList("Disculpa, no he logrado entenderte del todo. ¿Podrías ser un poco más claro?", "No te he logrado entender lo que me has dicho. ¿Podrías ser más claro?"),
+                                                      Arrays.asList("Adiós, espero haber sido de ayuda.", "¡Nos vemos! Espero que disfrutes tu viaje.")
+                                                      ),
+                                        Arrays.asList(
+                                                      Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?")
+                                                     )
+                                        );
+    }
 
-		for (List<String> pos : positive){
-			if (str.toLowerCase().contains(pos.get(0).toLowerCase())) {
-				return pos;
-			}
-		}
+    /**
+    * Método que permite la intersección de palabras de un string, con una lista de palabras clave, con el fin de
+    * deteminar el tipo de mensaje que entrega el usuario.
+    *
+    * @param str correponde al string ingresado por el usuario.
+    * 
+    * @return una lista con las palabras claves encontradas dentro del mensaje del usuario.
+    *
+    */ 
 
-		if (str.toLowerCase().compareTo("no") == 0){
-			return Arrays.asList("no");
-		}
+    public List<String> intersect(String str){
+        List<List<String>> cities = Arrays.asList(Arrays.asList("Arica", "$32.200 pesos."), Arrays.asList("Iquique", "$30.100 pesos"), Arrays.asList("Antofagasta", "$21.600 pesos"), Arrays.asList("Copiapó", "$15.000 pesos"), Arrays.asList("La Serena", "$9.100 pesos"), Arrays.asList("Valparaíso", "$6.500 pesos"), Arrays.asList("Rancagua", "$3.000 pesos"), Arrays.asList("Talca", "$6.500 pesos"), Arrays.asList("Concepción", "$13.900 pesos"), Arrays.asList("Temuco", "$14.900 pesos"), Arrays.asList("Puerto Montt", "$19.900 pesos"), Arrays.asList("Coyhaique", "$33.000 pesos"), Arrays.asList("Punta Arenas", "$15.000 pesos"), Arrays.asList("Valdivia", "$17.900 pesos"));
+        List<List<String>> positive = Arrays.asList(Arrays.asList("sí"), Arrays.asList("si"));
+        List<String> splittedStr = Arrays.asList(str);
 
-		return null;
+        for (List<String> city : cities) {
+            if (str.toLowerCase().contains(city.get(0).toLowerCase())){
+                return city;
+            }
+        }
 
-	}
+        for (List<String> pos : positive){
+            if (str.toLowerCase().contains(pos.get(0).toLowerCase())) {
+                return pos;
+            }
+        }
 
-	public int getSeed(){
-		return this.seed;
-	} 
+        if (str.toLowerCase().compareTo("no") == 0){
+            return Arrays.asList("no");
+        }
 
-	public List<List<List<String>>> getResponses(){
-		return this.responses;
-	}
+        return null;
 
-	public Message determineAnswer(List<Message> log, String str){
-		if (log.size() == 3){
-			Date date = new Date();
+    }
 
-			int position = (int) ((this.generator.nextDouble() * 20) % 2);
-			String response = str + " " + this.responses.get(this.seed).get(1).get(position);
-			System.out.println("Chatbot [>]: " + response);
-			Message message = new Message(date, "Chatbot", response);
+    /**
+    * Método que permite al chatbot identificar la respuesta que se le debe entregar al usuario, en base a los mensajes
+    * que existen dentro del log como en el mensaje entregado por el usuario.
+    *
+    * @param log correponde al historial de mensajes intercambiados por el usuario y el chatbot en el actual chat.
+    * @param str correponde al último string ingresado por el usuario.
+    * 
+    * @return un mensaje de respuesta frente al mensaje ingresado por el usuario.
+    *
+    */ 
 
-			return message;
-		} else {
-			if (intersect(str) != null){
-				if (intersect(str).size() == 2){
-					this.confirmed = true;
-					String placeToTravel = intersect(str).get(0);
-					String tickets = intersect(str).get(1);
-					Date date = new Date();
+    public Message determineAnswer(List<Message> log, String str){
+        if (log.size() == 3){
+            Date date = new Date();
 
-					int position = (int) ((this.generator.nextDouble() * 20) % 2);
-					String response = placeToTravel + " " + this.responses.get(this.seed).get(2).get(position) + " " + tickets + " ¿Deseas confirmar esos pasajes?";
-					System.out.println("Chatbot [>]: " + response);
-					Message message = new Message(date, "Chatbot", response);
-					
-					return message;
-				} else {
-					if (this.confirmed && (intersect(str).get(0).compareTo("sí") == 0 || intersect(str).get(0).compareTo("si") == 0)){
-						Date date = new Date();
+            int position = (int) ((this.generator.nextDouble() * 20) % 2);
+            String response = str + " " + this.responses.get(this.seed).get(1).get(position);
+            System.out.println("Chatbot [>]: " + response);
+            Message message = new Message(date, "Chatbot", response);
 
-						int position = (int) ((this.generator.nextDouble() * 20) % 2);
-						String response = this.responses.get(this.seed).get(3).get(position);
-						System.out.println("Chatbot [>]: " + response);
-						Message message = new Message(date, "Chatbot", response);
+            return message;
+        } else {
+            if (intersect(str) != null){
+                if (intersect(str).size() == 2){
+                    this.confirmed = true;
+                    String placeToTravel = intersect(str).get(0);
+                    String tickets = intersect(str).get(1);
+                    Date date = new Date();
 
-						return message;
-					} else {
-						this.confirmed = false;
-						Date date = new Date();
-						int position = (int) ((this.generator.nextDouble() * 20) % 2);
-						String response = this.responses.get(this.seed).get(4).get(position);
-						System.out.println("Chatbot [>]: " + response);
-						Message message = new Message(date, "Chatbot", response);
+                    int position = (int) ((this.generator.nextDouble() * 20) % 2);
+                    String response = placeToTravel + " " + this.responses.get(this.seed).get(2).get(position) + " " + tickets + " ¿Deseas confirmar esos pasajes?";
+                    System.out.println("Chatbot [>]: " + response);
+                    Message message = new Message(date, "Chatbot", response);
+                    
+                    return message;
+                } else {
+                    if (this.confirmed && (intersect(str).get(0).compareTo("sí") == 0 || intersect(str).get(0).compareTo("si") == 0)){
+                        Date date = new Date();
 
-						return message;						
-					}
-				}
-			} else {
-				Date date = new Date();
-				int position = (int) ((this.generator.nextDouble() * 20) % 2);
-				String response = this.responses.get(this.seed).get(5).get(position);
-				System.out.println("Chatbot [>]: " + response);
-				Message message = new Message(date, "Chatbot", response);
+                        int position = (int) ((this.generator.nextDouble() * 20) % 2);
+                        String response = this.responses.get(this.seed).get(3).get(position);
+                        System.out.println("Chatbot [>]: " + response);
+                        Message message = new Message(date, "Chatbot", response);
 
-				return message;	
-			}
-		}
-	}
+                        return message;
+                    } else {
+                        this.confirmed = false;
+                        Date date = new Date();
+                        int position = (int) ((this.generator.nextDouble() * 20) % 2);
+                        String response = this.responses.get(this.seed).get(4).get(position);
+                        System.out.println("Chatbot [>]: " + response);
+                        Message message = new Message(date, "Chatbot", response);
 
-	public Message greetings(){
-		Date date = new Date();
+                        return message;                     
+                    }
+                }
+            } else {
+                Date date = new Date();
+                int position = (int) ((this.generator.nextDouble() * 20) % 2);
+                String response = this.responses.get(this.seed).get(5).get(position);
+                System.out.println("Chatbot [>]: " + response);
+                Message message = new Message(date, "Chatbot", response);
 
-		int position = (int) ((this.generator.nextDouble() * 20) % 2);
-		String response = this.responses.get(this.seed).get(0).get(position);
-		System.out.println("Chatbot [>]: " + response);
+                return message; 
+            }
+        }
+    }
 
-		Message message = new Message(date, "Chatbot", response);
+    /**
+    * Método que permite al chatbot entregar un mensaje con el cual saludar al usuario.
+    *
+    * @return un mensaje saludando al usuario.
+    *
+    */ 
 
-		return message;
-	}
+    public Message greetings(){
+        Date date = new Date();
 
-	public Message goodbye(){
-		Date date = new Date();
+        int position = (int) ((this.generator.nextDouble() * 20) % 2);
+        String response = this.responses.get(this.seed).get(0).get(position);
+        System.out.println("Chatbot [>]: " + response);
 
-		int position = (int) ((this.generator.nextDouble() * 20) % 2);
-		String response = this.responses.get(this.seed).get(6).get(position);
-		System.out.println("Chatbot [>]: " + response);
+        Message message = new Message(date, "Chatbot", response);
 
-		Message message = new Message(date, "Chatbot", response);
+        return message;
+    }
 
-		return message;
-	}
+    /**
+    * Método que permite al chatbot entregar un mensaje con el cual despedirse del usuario.
+    *
+    * @return un mensaje despidiéndose del usuario.
+    *
+    */ 
 
-	public void setRate(String rate){
-		this.rate = rate;
-	}
+    public Message goodbye(){
+        Date date = new Date();
 
-	public void showResponses(){
-		System.out.println("Semilla del chatbot: " + this.seed);
-		for (List<List<String>> listOfList : this.responses) {
-			for (List<String> list : listOfList) {
-				for (String str : list) {
-					System.out.println(str);					
-				}
-			}
-		}
-	}
+        int position = (int) ((this.generator.nextDouble() * 20) % 2);
+        String response = this.responses.get(this.seed).get(6).get(position);
+        System.out.println("Chatbot [>]: " + response);
 
+        Message message = new Message(date, "Chatbot", response);
+
+        return message;
+    }
+
+    /**
+    * Método que permite darle una nota al chatbot. La nota es almacenada junto a la fecha en un string.
+    *
+    * @param rate string que contiene tanto la fecha como el rate que se le ha dado al chatbot
+    *
+    */ 
+
+    public void setRate(String rate){
+        this.rate = rate;
+    }
 }

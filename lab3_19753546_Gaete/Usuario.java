@@ -35,7 +35,7 @@ public class Usuario{
 
         while (userEntry.length() == 0){
             System.out.println("Sistema [!]: No se ha ingresado texto. Envie nuevamente su mensaje.");
-            System.out.print("Usuario [>]: ");
+            System.out.print(this.name + " [>]: ");
             userEntry = sc.nextLine();
         }
 
