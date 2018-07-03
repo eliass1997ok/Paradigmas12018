@@ -9,8 +9,8 @@
 
 public class Main{
 	public static void main(String[] args) {
-		Lab lab = new Lab();
+		Chat chat = new Chat();
 
-		lab.run();
+		chat.run();
 	}
 }

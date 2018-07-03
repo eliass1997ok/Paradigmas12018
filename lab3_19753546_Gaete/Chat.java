@@ -4,14 +4,34 @@ import java.lang.*;
 import java.text.*;
 
 /**
-* La clase Lab permite la interacción entre usuario y chatbot. Es en esta clase en donde se almacena el log de la 
+* La clase Chat permite la interacción entre usuario y chatbot. Es en esta clase en donde se almacena el log de la 
 * conversación, se instancia al usuario, y al respectivo chatbot.
 *
 * @version 1.0
 * @since 1.0
 */
 
-public class Lab{
+public class Chat{
+    private Chatbot chatbot;
+    private Usuario user;
+    private List<Message> log;
+    private int seed;
+    private boolean endedDialog;
+    private boolean startedDialog;
+
+    /**
+    * Constructor que permite la instanciación de un chat, inicialmente vacío, en donde se permitirá la interacción entre
+    * el usuario y el chatbot. Se mantiene el registro de la conversación en el log, además de una marca que permite
+    * determinar si el chat se ha iniciado, y posteriormente si es que ha terminado.
+    *
+    */
+
+    public Chat(){
+        this.chatbot = null;
+        this.user = new Usuario();
+        this.log = new ArrayList<Message>();
+        this.seed = 0;
+    }
 
     /**
     * Método que permite la identificación de una instrucción ingresada por el usuario. 
@@ -23,7 +43,7 @@ public class Lab{
     *
     */
 
-    public static int determineInstruction(String interaction){
+    public int determineInstruction(String interaction){
         String[] instruction = interaction.split("!");
 
         if (instruction[1].compareTo("beginDialog") == 0){
@@ -47,74 +67,69 @@ public class Lab{
     *
     */    
 
-    public static void run() {
+    public void run() {
         Scanner sc = new Scanner(System.in);
-        List<Message> log = new ArrayList<Message>();
-        Chatbot chatbot;
-        chatbot = null;
-        Usuario user = new Usuario();       
-        int seed;
 
         System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
 
-        boolean endedDialog = false;
-        boolean startedDialog = false;
+        this.endedDialog = false;
+        this.startedDialog = false;
 
-        while (! endedDialog){
-            Message msg = user.sendMessage();
+        while (! this.endedDialog){
+            Message msg = this.user.sendMessage();
             String[] splitedString = msg.getContent().split(" ");
 
-            if (startedDialog) log.add(msg);
+            if (this.startedDialog) this.log.add(msg);
 
-            if (chatbot == null){
-                if (splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
+            if (this.chatbot == null){
+                if (splitedString.length != 0 && splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
                     if (splitedString.length == 1){
-                            chatbot = new Chatbot();
+                            this.chatbot = new Chatbot();
 
                         } else {
-                            chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+                            this.chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
                         }
 
                         System.out.println("Se ha iniciado correctamente el chat");
 
-                        log.add(new Message(new Date(), "Usuario", msg.getContent()));
-                        Message greetings = chatbot.greetings();
-                        log.add(greetings);
+                        this.log.add(new Message(new Date(), "Usuario", msg.getContent()));
+                        Message greetings = this.chatbot.greetings();
+                        this.log.add(greetings);
 
                         System.out.print("Usuario [>]: ");
                         String name = sc.nextLine();
-                        user.setName(name);
+                        this.user.setName(name);
 
                         Message nameMessage = new Message(new Date(), "Usuario", name);
-                        log.add(nameMessage);
-                        Message answer = chatbot.determineAnswer(log, nameMessage.getContent());
-                        log.add(answer);
-                        startedDialog = true;                       
+                        this.log.add(nameMessage);
+                        Message answer = this.chatbot.determineAnswer(this.log, nameMessage.getContent());
+                        this.log.add(answer);
+                        this.startedDialog = true;                       
 
                 } else {
                     System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente."); 
                 }
 
             } else {
-                if (splitedString[0].charAt(0) == '!'){
+                if (splitedString.length != 0 && splitedString[0].charAt(0) == '!'){
                     switch(determineInstruction(splitedString[0])){
                         case(1):
                             if (splitedString.length == 1)
-                                chatbot = new Chatbot();
+                                this.chatbot = new Chatbot();
                             else 
-                                chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+                                this.chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
 
                             System.out.println("Se ha iniciado correctamente el chat");
 
-                            log.clear();
-                            log.add(new Message(new Date(), "Usuario", msg.getContent()));
+                            this.log.clear();
+                            this.log.add(new Message(new Date(), "Usuario", msg.getContent()));
 
-                            Message greetings = chatbot.greetings();
-                            log.add(greetings);
+                            Message greetings = this.chatbot.greetings();
+                            this.log.add(greetings);
 
                             System.out.print("Usuario [>]: ");
                             String name = sc.nextLine();
-                            user.setName(name);
+                            this.user.setName(name);
 
                             Message nameMessage = new Message(new Date(), "Usuario", name);
 
@@ -128,7 +143,7 @@ public class Lab{
 
                             try {
                                 PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-                                for (Message messageInLog : log){
+                                for (Message messageInLog : this.log){
                                     writer.write(messageInLog.toString() + "\n");
                                 }
 
@@ -148,25 +163,25 @@ public class Lab{
                                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                                 Date dateToRate = new Date();
                                 String strDate = dateFormat.format(dateToRate);
-                                chatbot.setRate(strDate + splitedString[1]);
-                                user.setRate(strDate + splitedString[2]);
+                                this.chatbot.setRate(strDate + splitedString[1]);
+                                this.user.setRate(strDate + splitedString[2]);
 
                             }
                             break;
 
                         case(9):
-                            endedDialog = true;
-                            Message goodbye = chatbot.goodbye();
-                            log.add(goodbye);
+                            this.endedDialog = true;
+                            Message goodbye = this.chatbot.goodbye();
+                            this.log.add(goodbye);
                             break;
 
                         default:
                             System.out.println("Sistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.");
                     }                   
                 } else {
-                    Message answerOfChatbot = chatbot.determineAnswer(log, msg.getContent());
+                    Message answerOfChatbot = this.chatbot.determineAnswer(this.log, msg.getContent());
                     
-                    log.add(answerOfChatbot);
+                    this.log.add(answerOfChatbot);
                 }
             }
         }
