@@ -42,7 +42,13 @@ public class Chatbot{
                                                       Arrays.asList("Adiós, espero haber sido de ayuda.", "¡Nos vemos! Espero que disfrutes tu viaje.")
                                                       ),
                                         Arrays.asList(
-                                                      Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?")
+                                                      Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?"),
+                                                      Arrays.asList("y dime, ¿a dónde te quieres pegar un pique? Yo viajaría al sur, pero no sé tú.", "y bueno, ¿dónde nos vamos de paseo? a mi me gusta el norte, pero soy un bot, así que no puedo ir muy lejos que digamos :("),
+                                                      Arrays.asList(" es un muy lindo lugar para viajar. Los pasajes eso si están a ", "es muy buen lugar! Si tan sólo yo pudiera viajar, lo haría hacia allá. Los pasajes cuestan "),
+                                                      Arrays.asList("¡Bien! Ahora sólo debes confimar los pasajes en nuestro sitio web.", "Excelente, ahora puedes confirmar cantidad de pasajes en nuestro sitio web. Recuerda que soy un bot, así que no me incluyas en tu viaje."),
+                                                      Arrays.asList("Entonces amigo, ¿tienes algún otro lugar en mente? dímelo, con confianza.", "¿A qué lugar quieres viajar entonces?"),
+                                                      Arrays.asList("Uf, creo que la persona que me programó no tenía en cuenta tu mensaje. ¿Podrías intentar ser un poquito más claro?", "No entendí bien lo que me dijiste, ¿podrías intentar ser más claro?"),
+                                                      Arrays.asList("Adiós amigo, fue un gusto hablar contigo, espero que disfrutes tu viaje tanto como yo disfruté esta conversación.", "¡Éxito en tu viaje! Espero que te vaya excelente.")
                                                      )
                                         );
     }
@@ -69,7 +75,13 @@ public class Chatbot{
                                                       Arrays.asList("Adiós, espero haber sido de ayuda.", "¡Nos vemos! Espero que disfrutes tu viaje.")
                                                       ),
                                         Arrays.asList(
-                                                      Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?")
+                                                      Arrays.asList("Hola amigo, soy un Chatbot, y te quiero ayudar. Partamos por tu nombre", "Hola, ¿Cómo estás? Yo bien, soy un chatbot, siempre estoy bien. ¿Cuál es tu nombre?"),
+                                                      Arrays.asList("y dime, ¿a dónde te quieres pegar un pique? Yo viajaría al sur, pero no sé tú.", "y bueno, ¿dónde nos vamos de paseo? a mi me gusta el norte, pero soy un bot, así que no puedo ir muy lejos que digamos :("),
+                                                      Arrays.asList(" es un muy lindo lugar para viajar. Los pasajes eso si están a ", "es muy buen lugar! Si tan sólo yo pudiera viajar, lo haría hacia allá. Los pasajes cuestan "),
+                                                      Arrays.asList("¡Bien! Ahora sólo debes confimar los pasajes en nuestro sitio web.", "Excelente, ahora puedes confirmar cantidad de pasajes en nuestro sitio web. Recuerda que soy un bot, así que no me incluyas en tu viaje."),
+                                                      Arrays.asList("Entonces amigo, ¿tienes algún otro lugar en mente? dímelo, con confianza.", "¿A qué lugar quieres viajar entonces?"),
+                                                      Arrays.asList("Uf, creo que la persona que me programó no tenía en cuenta tu mensaje. ¿Podrías intentar ser un poquito más claro?", "No entendí bien lo que me dijiste, ¿podrías intentar ser más claro?"),
+                                                      Arrays.asList("Adiós amigo, fue un gusto hablar contigo, espero que disfrutes tu viaje tanto como yo disfruté esta conversación.", "¡Éxito en tu viaje! Espero que te vaya excelente.")
                                                      )
                                         );
     }
@@ -125,7 +137,7 @@ public class Chatbot{
             Date date = new Date();
 
             int position = (int) ((this.generator.nextDouble() * 20) % 2);
-            String response = str + " " + this.responses.get(this.seed).get(1).get(position);
+            String response = str + " " + this.responses.get(this.seed % 2).get(1).get(position);
             System.out.println("Chatbot [>]: " + response);
             Message message = new Message(date, "Chatbot", response);
 

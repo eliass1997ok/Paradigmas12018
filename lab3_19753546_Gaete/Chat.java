@@ -14,8 +14,7 @@ import java.text.*;
 public class Chat{
     private Chatbot chatbot;
     private Usuario user;
-    private List<Message> log;
-    private int seed;
+    private Log log;
     private boolean endedDialog;
     private boolean startedDialog;
 
@@ -29,8 +28,7 @@ public class Chat{
     public Chat(){
         this.chatbot = null;
         this.user = new Usuario();
-        this.log = new ArrayList<Message>();
-        this.seed = 0;
+        this.log = new Log();
     }
 
     /**
@@ -79,7 +77,7 @@ public class Chat{
             Message msg = this.user.sendMessage();
             String[] splitedString = msg.getContent().split(" ");
 
-            if (this.startedDialog) this.log.add(msg);
+            if (this.startedDialog) this.log.addMessage(msg);
 
             if (this.chatbot == null){
                 if (splitedString.length != 0 && splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
@@ -92,18 +90,18 @@ public class Chat{
 
                         System.out.println("Se ha iniciado correctamente el chat");
 
-                        this.log.add(new Message(new Date(), "Usuario", msg.getContent()));
+                        this.log.addMessage(new Message(new Date(), "Usuario", msg.getContent()));
                         Message greetings = this.chatbot.greetings();
-                        this.log.add(greetings);
+                        this.log.addMessage(greetings);
 
                         System.out.print("Usuario [>]: ");
                         String name = sc.nextLine();
                         this.user.setName(name);
 
                         Message nameMessage = new Message(new Date(), "Usuario", name);
-                        this.log.add(nameMessage);
-                        Message answer = this.chatbot.determineAnswer(this.log, nameMessage.getContent());
-                        this.log.add(answer);
+                        this.log.addMessage(nameMessage);
+                        Message answer = this.chatbot.determineAnswer(this.log.getLog(), nameMessage.getContent());
+                        this.log.addMessage(answer);
                         this.startedDialog = true;                       
 
                 } else {
@@ -121,11 +119,11 @@ public class Chat{
 
                             System.out.println("Se ha iniciado correctamente el chat");
 
-                            this.log.clear();
-                            this.log.add(new Message(new Date(), "Usuario", msg.getContent()));
+                            this.log.clearLog();
+                            this.log.addMessage(new Message(new Date(), "Usuario", msg.getContent()));
 
                             Message greetings = this.chatbot.greetings();
-                            this.log.add(greetings);
+                            this.log.addMessage(greetings);
 
                             System.out.print("Usuario [>]: ");
                             String name = sc.nextLine();
@@ -143,7 +141,7 @@ public class Chat{
 
                             try {
                                 PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-                                for (Message messageInLog : this.log){
+                                for (Message messageInLog : this.log.getLog()){
                                     writer.write(messageInLog.toString() + "\n");
                                 }
 
@@ -172,16 +170,16 @@ public class Chat{
                         case(9):
                             this.endedDialog = true;
                             Message goodbye = this.chatbot.goodbye();
-                            this.log.add(goodbye);
+                            this.log.addMessage(goodbye);
                             break;
 
                         default:
                             System.out.println("Sistema [!]: La instrucción especificada no existe. Por favor, ingrese nuevamente.");
                     }                   
                 } else {
-                    Message answerOfChatbot = this.chatbot.determineAnswer(this.log, msg.getContent());
+                    Message answerOfChatbot = this.chatbot.determineAnswer(this.log.getLog(), msg.getContent());
                     
-                    this.log.add(answerOfChatbot);
+                    this.log.addMessage(answerOfChatbot);
                 }
             }
         }
