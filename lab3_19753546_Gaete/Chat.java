@@ -52,6 +52,8 @@ public class Chat{
             return 3;
         } else if (instruction[1].compareTo("rate") == 0){
             return 4;
+        } else if (instruction[1].compareTo("exit") == 0){
+            return 8;
         } else if (instruction[1].compareTo("endDialog") == 0){
             return 9;
         }
@@ -68,10 +70,12 @@ public class Chat{
     public void run() {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("Sistema [!] Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
+        System.out.println("Sistema [!]: Bienvenido al Chatbot de turismo #1 de Santiago. Este Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.");
 
         this.endedDialog = false;
         this.startedDialog = false;
+
+        boolean finished = false;
 
         while (! this.endedDialog){
             Message msg = this.user.sendMessage();
@@ -79,7 +83,7 @@ public class Chat{
 
             if (this.startedDialog) this.log.addMessage(msg);
 
-            if (this.chatbot == null){
+            if (this.chatbot == null || finished){
                 if (splitedString.length != 0 && splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 1){
                     if (splitedString.length == 1){
                             this.chatbot = new Chatbot();
@@ -88,7 +92,9 @@ public class Chat{
                             this.chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
                         }
 
-                        System.out.println("Se ha iniciado correctamente el chat");
+                        finished = false;
+
+                        System.out.println("Sistema [>]: Se ha iniciado correctamente el chat");
 
                         this.log.addMessage(new Message(new Date(), "Usuario", msg.getContent()));
                         Message greetings = this.chatbot.greetings();
@@ -104,6 +110,10 @@ public class Chat{
                         this.log.addMessage(answer);
                         this.startedDialog = true;                       
 
+                } else if (splitedString.length != 0 && splitedString[0].charAt(0) == '!' && determineInstruction(splitedString[0]) == 8){
+                    System.out.println("El programa ha finalizado con éxito");
+                    this.endedDialog = true;
+
                 } else {
                     System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente."); 
                 }
@@ -116,6 +126,8 @@ public class Chat{
                                 this.chatbot = new Chatbot();
                             else 
                                 this.chatbot = new Chatbot(Integer.parseInt(splitedString[1]));
+
+                            finished = false;
 
                             System.out.println("Se ha iniciado correctamente el chat");
 
@@ -166,11 +178,18 @@ public class Chat{
 
                             }
                             break;
+                        case(8):
+                            this.endedDialog = true;
+                            System.out.println("El programa ha finalizado con éxito");
+                            break;
 
                         case(9):
-                            this.endedDialog = true;
+                            finished = true;
+                            this.startedDialog = false;
                             Message goodbye = this.chatbot.goodbye();
+                            this.user.setName("Usuario");
                             this.log.addMessage(goodbye);
+                            this.log.clearLog();
                             break;
 
                         default:
