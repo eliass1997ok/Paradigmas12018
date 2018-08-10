@@ -40,7 +40,7 @@ public class Chat{
     * retorna un valor negativo, identificador especial para estos casos.
     *
     */
-
+    
     public int determineInstruction(String interaction){
         String[] instruction = interaction.split("!");
 
@@ -115,7 +115,7 @@ public class Chat{
                     this.endedDialog = true;
 
                 } else {
-                    System.out.println("Sistema [!] El chat no se ha iniciado correctamente, intente nuevamente."); 
+                    System.out.println("Sistema [!]: El chat no se ha iniciado correctamente, intente nuevamente."); 
                 }
 
             } else {
