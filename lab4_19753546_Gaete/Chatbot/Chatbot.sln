@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatbotFrontEnd", "Chatbot\ChatbotFrontEnd.csproj", "{B46FB59A-CF95-4962-A900-B9DF01671B86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatbotBackEnd", "ChatbotBackEnd\ChatbotBackEnd.csproj", "{72343262-5473-483F-AC89-4AD28DF976AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B46FB59A-CF95-4962-A900-B9DF01671B86}.Debug|x86.ActiveCfg = Debug|x86
+		{B46FB59A-CF95-4962-A900-B9DF01671B86}.Debug|x86.Build.0 = Debug|x86
+		{B46FB59A-CF95-4962-A900-B9DF01671B86}.Release|x86.ActiveCfg = Release|x86
+		{B46FB59A-CF95-4962-A900-B9DF01671B86}.Release|x86.Build.0 = Release|x86
+		{72343262-5473-483F-AC89-4AD28DF976AB}.Debug|x86.ActiveCfg = Debug|x86
+		{72343262-5473-483F-AC89-4AD28DF976AB}.Debug|x86.Build.0 = Debug|x86
+		{72343262-5473-483F-AC89-4AD28DF976AB}.Release|x86.ActiveCfg = Release|x86
+		{72343262-5473-483F-AC89-4AD28DF976AB}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal

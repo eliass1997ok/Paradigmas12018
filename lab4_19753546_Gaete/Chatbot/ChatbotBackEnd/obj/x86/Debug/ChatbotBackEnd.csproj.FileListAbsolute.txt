@@ -1,0 +1,12 @@
+/Users/gaelgalu/Projects/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.csprojResolveAssemblyReference.cache
+/Users/gaelgalu/Projects/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.csproj.CoreCompileInputs.cache
+/Users/gaelgalu/Projects/Chatbot/ChatbotBackEnd/bin/Debug/ChatbotBackEnd.dll
+/Users/gaelgalu/Projects/Chatbot/ChatbotBackEnd/bin/Debug/ChatbotBackEnd.pdb
+/Users/gaelgalu/Projects/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.dll
+/Users/gaelgalu/Projects/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.pdb
+/Users/gaelgalu/Documents/Paradigmas12018/lab4_19753546_Gaete/Chatbot/ChatbotBackEnd/bin/Debug/ChatbotBackEnd.dll
+/Users/gaelgalu/Documents/Paradigmas12018/lab4_19753546_Gaete/Chatbot/ChatbotBackEnd/bin/Debug/ChatbotBackEnd.pdb
+/Users/gaelgalu/Documents/Paradigmas12018/lab4_19753546_Gaete/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.csprojResolveAssemblyReference.cache
+/Users/gaelgalu/Documents/Paradigmas12018/lab4_19753546_Gaete/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.csproj.CoreCompileInputs.cache
+/Users/gaelgalu/Documents/Paradigmas12018/lab4_19753546_Gaete/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.dll
+/Users/gaelgalu/Documents/Paradigmas12018/lab4_19753546_Gaete/Chatbot/ChatbotBackEnd/obj/x86/Debug/ChatbotBackEnd.pdb

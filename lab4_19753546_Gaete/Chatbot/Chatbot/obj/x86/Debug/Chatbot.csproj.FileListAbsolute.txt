@@ -1,0 +1,6 @@
+/Users/gaelgalu/Projects/Chatbot/Chatbot/bin/Debug/Chatbot.exe
+/Users/gaelgalu/Projects/Chatbot/Chatbot/bin/Debug/Chatbot.pdb
+/Users/gaelgalu/Projects/Chatbot/Chatbot/obj/x86/Debug/Chatbot.csprojResolveAssemblyReference.cache
+/Users/gaelgalu/Projects/Chatbot/Chatbot/obj/x86/Debug/Chatbot.csproj.CoreCompileInputs.cache
+/Users/gaelgalu/Projects/Chatbot/Chatbot/obj/x86/Debug/Chatbot.exe
+/Users/gaelgalu/Projects/Chatbot/Chatbot/obj/x86/Debug/Chatbot.pdb

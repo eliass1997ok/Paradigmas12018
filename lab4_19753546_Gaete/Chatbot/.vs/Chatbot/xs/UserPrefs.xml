@@ -1,0 +1,14 @@
+﻿<Properties StartupConfiguration="{B46FB59A-CF95-4962-A900-B9DF01671B86}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Chatbot/MainWindow.cs">
+    <Files>
+      <File FileName="Chatbot/MainWindow.cs" Line="27" Column="41" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.ChatbotFrontEnd PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>
