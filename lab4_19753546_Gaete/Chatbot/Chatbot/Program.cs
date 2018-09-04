@@ -1,7 +1,7 @@
 ﻿using System;
 using Gtk;
 
-namespace ChatbotFrontEnd
+namespace ChatbotFrontend
 {
     class MainClass
     {
