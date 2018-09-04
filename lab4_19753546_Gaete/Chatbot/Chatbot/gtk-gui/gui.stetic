@@ -26,6 +26,8 @@
                 <property name="CanFocus">True</property>
                 <property name="Editable">False</property>
                 <property name="Text" translatable="yes" />
+                <property name="WrapMode">Word</property>
+                <property name="RightMargin">1</property>
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -89,13 +91,45 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="BeginButton">
+              <widget class="Gtk.HBox" id="hbox3">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Iniciar Chat</property>
-                <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnBeginButtonClicked" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.Button" id="beginDialog">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Type">TextOnly</property>
+                    <property name="Label" translatable="yes">Iniciar Chat</property>
+                    <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="clickedBegin" />
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gtk.TextView" id="seedview">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="Overwrite">True</property>
+                        <property name="Text" translatable="yes">Seed</property>
+                        <property name="RightMargin">15</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -105,12 +139,13 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="button5">
+              <widget class="Gtk.Button" id="saveLog">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Guardar Log</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnSaveLogClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -150,12 +185,13 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="button11">
+              <widget class="Gtk.Button" id="endDialog">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Terminar Chat</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnEndDialogClicked" />
               </widget>
               <packing>
                 <property name="Position">4</property>

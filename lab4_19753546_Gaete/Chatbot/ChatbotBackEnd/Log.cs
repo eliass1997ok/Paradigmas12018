@@ -27,5 +27,20 @@ namespace ChatbotBackend
         public List<Message> getLog(){
             return this.log;
         }
+
+        public String[] messagesToStrings(){
+            List<String> listOfStrings;
+            listOfStrings = new List<String>();
+
+            foreach (Message msg in this.log){
+                listOfStrings.Add(msg.toString());
+            }
+
+            return listOfStrings.ToArray();
+        }
+
+        public Message[] logToArrayMessages(){
+            return this.log.ToArray();
+        }
     }
 }

@@ -1,0 +1,10 @@
+[03-09-2018, 21:17:52] Chatbot [>]: Hola, bienvenido al chat, ¿cuál es tu nombre?
+
+[03-09-2018, 21:17:56] Usuario [>]: Gabriel
+
+[03-09-2018, 21:18:06] Gabriel [>]: quiero viajar a la ciudad de valparaíso
+
+[03-09-2018, 21:18:09] Gabriel [>]: sí
+
+[03-09-2018, 21:18:12] Chatbot [>]:¡Nos vemos! Espero que disfrutes tu viaje.
+

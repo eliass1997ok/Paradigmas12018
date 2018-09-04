@@ -30,6 +30,7 @@
     <Compile Include="Chatbot.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Usuario.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

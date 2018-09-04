@@ -19,15 +19,21 @@ public partial class MainWindow
 
 	private global::Gtk.VBox vbox3;
 
-	private global::Gtk.Button BeginButton;
+	private global::Gtk.HBox hbox3;
 
-	private global::Gtk.Button button5;
+	private global::Gtk.Button beginDialog;
+
+	private global::Gtk.ScrolledWindow GtkScrolledWindow;
+
+	private global::Gtk.TextView seedview;
+
+	private global::Gtk.Button saveLog;
 
 	private global::Gtk.Button button7;
 
 	private global::Gtk.Button button9;
 
-	private global::Gtk.Button button11;
+	private global::Gtk.Button endDialog;
 
 	private global::Gtk.Button ClearChat;
 
@@ -51,6 +57,8 @@ public partial class MainWindow
 		this.textview1.CanFocus = true;
 		this.textview1.Name = "textview1";
 		this.textview1.Editable = false;
+		this.textview1.WrapMode = ((global::Gtk.WrapMode)(2));
+		this.textview1.RightMargin = 1;
 		this.vbox1.Add(this.textview1);
 		global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.textview1]));
 		w1.Position = 0;
@@ -94,27 +102,51 @@ public partial class MainWindow
 		this.vbox3.Name = "vbox3";
 		this.vbox3.Spacing = 6;
 		// Container child vbox3.Gtk.Box+BoxChild
-		this.BeginButton = new global::Gtk.Button();
-		this.BeginButton.CanFocus = true;
-		this.BeginButton.Name = "BeginButton";
-		this.BeginButton.UseUnderline = true;
-		this.BeginButton.Label = global::Mono.Unix.Catalog.GetString("Iniciar Chat");
-		this.vbox3.Add(this.BeginButton);
-		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.BeginButton]));
+		this.hbox3 = new global::Gtk.HBox();
+		this.hbox3.Name = "hbox3";
+		this.hbox3.Spacing = 6;
+		// Container child hbox3.Gtk.Box+BoxChild
+		this.beginDialog = new global::Gtk.Button();
+		this.beginDialog.CanFocus = true;
+		this.beginDialog.Name = "beginDialog";
+		this.beginDialog.UseUnderline = true;
+		this.beginDialog.Label = global::Mono.Unix.Catalog.GetString("Iniciar Chat");
+		this.hbox3.Add(this.beginDialog);
+		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.beginDialog]));
 		w7.Position = 0;
 		w7.Expand = false;
 		w7.Fill = false;
+		// Container child hbox3.Gtk.Box+BoxChild
+		this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+		// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+		this.seedview = new global::Gtk.TextView();
+		this.seedview.Buffer.Text = global::Mono.Unix.Catalog.GetString("Seed");
+		this.seedview.CanFocus = true;
+		this.seedview.Name = "seedview";
+		this.seedview.Overwrite = true;
+		this.seedview.RightMargin = 15;
+		this.GtkScrolledWindow.Add(this.seedview);
+		this.hbox3.Add(this.GtkScrolledWindow);
+		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.GtkScrolledWindow]));
+		w9.Position = 1;
+		this.vbox3.Add(this.hbox3);
+		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox3]));
+		w10.Position = 0;
+		w10.Expand = false;
+		w10.Fill = false;
 		// Container child vbox3.Gtk.Box+BoxChild
-		this.button5 = new global::Gtk.Button();
-		this.button5.CanFocus = true;
-		this.button5.Name = "button5";
-		this.button5.UseUnderline = true;
-		this.button5.Label = global::Mono.Unix.Catalog.GetString("Guardar Log");
-		this.vbox3.Add(this.button5);
-		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button5]));
-		w8.Position = 1;
-		w8.Expand = false;
-		w8.Fill = false;
+		this.saveLog = new global::Gtk.Button();
+		this.saveLog.CanFocus = true;
+		this.saveLog.Name = "saveLog";
+		this.saveLog.UseUnderline = true;
+		this.saveLog.Label = global::Mono.Unix.Catalog.GetString("Guardar Log");
+		this.vbox3.Add(this.saveLog);
+		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.saveLog]));
+		w11.Position = 1;
+		w11.Expand = false;
+		w11.Fill = false;
 		// Container child vbox3.Gtk.Box+BoxChild
 		this.button7 = new global::Gtk.Button();
 		this.button7.CanFocus = true;
@@ -122,10 +154,10 @@ public partial class MainWindow
 		this.button7.UseUnderline = true;
 		this.button7.Label = global::Mono.Unix.Catalog.GetString("Cargar Log");
 		this.vbox3.Add(this.button7);
-		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button7]));
-		w9.Position = 2;
-		w9.Expand = false;
-		w9.Fill = false;
+		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button7]));
+		w12.Position = 2;
+		w12.Expand = false;
+		w12.Fill = false;
 		// Container child vbox3.Gtk.Box+BoxChild
 		this.button9 = new global::Gtk.Button();
 		this.button9.CanFocus = true;
@@ -133,21 +165,21 @@ public partial class MainWindow
 		this.button9.UseUnderline = true;
 		this.button9.Label = global::Mono.Unix.Catalog.GetString("Rate Chat");
 		this.vbox3.Add(this.button9);
-		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button9]));
-		w10.Position = 3;
-		w10.Expand = false;
-		w10.Fill = false;
+		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button9]));
+		w13.Position = 3;
+		w13.Expand = false;
+		w13.Fill = false;
 		// Container child vbox3.Gtk.Box+BoxChild
-		this.button11 = new global::Gtk.Button();
-		this.button11.CanFocus = true;
-		this.button11.Name = "button11";
-		this.button11.UseUnderline = true;
-		this.button11.Label = global::Mono.Unix.Catalog.GetString("Terminar Chat");
-		this.vbox3.Add(this.button11);
-		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button11]));
-		w11.Position = 4;
-		w11.Expand = false;
-		w11.Fill = false;
+		this.endDialog = new global::Gtk.Button();
+		this.endDialog.CanFocus = true;
+		this.endDialog.Name = "endDialog";
+		this.endDialog.UseUnderline = true;
+		this.endDialog.Label = global::Mono.Unix.Catalog.GetString("Terminar Chat");
+		this.vbox3.Add(this.endDialog);
+		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.endDialog]));
+		w14.Position = 4;
+		w14.Expand = false;
+		w14.Fill = false;
 		// Container child vbox3.Gtk.Box+BoxChild
 		this.ClearChat = new global::Gtk.Button();
 		this.ClearChat.CanFocus = true;
@@ -155,16 +187,16 @@ public partial class MainWindow
 		this.ClearChat.UseUnderline = true;
 		this.ClearChat.Label = global::Mono.Unix.Catalog.GetString("Limpiar Pantalla");
 		this.vbox3.Add(this.ClearChat);
-		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.ClearChat]));
-		w12.PackType = ((global::Gtk.PackType)(1));
-		w12.Position = 5;
-		w12.Expand = false;
-		w12.Fill = false;
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.ClearChat]));
+		w15.PackType = ((global::Gtk.PackType)(1));
+		w15.Position = 5;
+		w15.Expand = false;
+		w15.Fill = false;
 		this.hbox1.Add(this.vbox3);
-		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vbox3]));
-		w13.Position = 1;
-		w13.Expand = false;
-		w13.Fill = false;
+		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vbox3]));
+		w16.Position = 1;
+		w16.Expand = false;
+		w16.Fill = false;
 		this.Add(this.hbox1);
 		if ((this.Child != null))
 		{
@@ -175,7 +207,9 @@ public partial class MainWindow
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
 		this.SendButton.Clicked += new global::System.EventHandler(this.OnSendButtonClicked);
-		this.BeginButton.Clicked += new global::System.EventHandler(this.OnBeginButtonClicked);
+		this.beginDialog.Clicked += new global::System.EventHandler(this.clickedBegin);
+		this.saveLog.Clicked += new global::System.EventHandler(this.OnSaveLogClicked);
+		this.endDialog.Clicked += new global::System.EventHandler(this.OnEndDialogClicked);
 		this.ClearChat.Clicked += new global::System.EventHandler(this.OnClearChatClicked);
 	}
 }

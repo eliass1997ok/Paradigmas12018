@@ -153,7 +153,7 @@ namespace ChatbotBackend
         }
 
         public Message determineAnswer(List<Message> log, String str){
-            if (log.Count == 3){
+            if (log.Count == 2){
                 DateTime date = DateTime.Now;
                 int position = (int)((this.generator.NextDouble() * 20) % 2);
                 String response = str + " " + this.responses[this.seed][1][position];
