@@ -10,8 +10,6 @@ namespace ChatbotFrontend
         private Chatbot chatbot;
         private Usuario user;
         private Log log;
-        private bool startedDialog;
-        private bool endedDialog;
 
         public MainWindow() : base(Gtk.WindowType.Toplevel)
         {
@@ -66,6 +64,7 @@ namespace ChatbotFrontend
                         textview1.Buffer.Text += msgUser.toString();
                         Message msgChatbot;
                         msgChatbot = this.chatbot.determineAnswer(this.log.getLog(), msg);
+                        this.log.addMessage(msgChatbot);
                         textview1.Buffer.Text += msgChatbot.toString();
                     }
 
@@ -102,14 +101,22 @@ namespace ChatbotFrontend
         {
             if (this.chatbot != null)
             {
+
                 Message msg = this.chatbot.goodbye();
                 this.log.addMessage(msg);
-                textview1.Buffer.Text += msg.toString();
                 this.chatbot = null;
-                RateWindow rateWindow = new RateWindow();
-                rateWindow.Show();
-                this.log.addMessage(new Message(DateTime.Now, "Sistema [!]: ", "Nota del Usuario: " + rateWindow.getUserRate()));
-                this.log.addMessage(new Message(DateTime.Now, "Sistema [!]: ", "Nota del Chatbot: " + rateWindow.getChatbotRate()));
+                textview1.Buffer.Text += msg.toString();
+
+                RateDialog rateDialog = new RateDialog();
+                rateDialog.Run();
+
+                this.log.addMessage(new Message(DateTime.Now, "Sistema [!]: ", "Nota del Usuario: " + rateDialog.getUserRate()));
+                this.log.addMessage(new Message(DateTime.Now, "Sistema [!]: ", "Nota del Chatbot: " + rateDialog.getChatbotRate()));
+
+                textview1.Buffer.Text += "Sistema [!]: Nota del Usuario -> " + rateDialog.getUserRate() + "\n";
+                textview1.Buffer.Text += "Sistema [!]: Nota del Chatbot -> " + rateDialog.getChatbotRate() + "\n";
+                textview1.Buffer.Text += "Sistema [!]: Notas puestas de manera satisfactoria. Esto se verá reflejado en el log.\n";
+
             }
             else
             {

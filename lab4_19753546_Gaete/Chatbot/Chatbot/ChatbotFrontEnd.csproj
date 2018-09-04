@@ -58,9 +58,9 @@
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RateWindow.cs" />
-    <Compile Include="gtk-gui\ChatbotFrontend.RateWindow.cs" />
     <Compile Include="gtk-gui\ChatbotFrontend.MainWindow.cs" />
+    <Compile Include="RateDialog.cs" />
+    <Compile Include="gtk-gui\ChatbotFrontend.RateDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChatbotBackEnd\ChatbotBackEnd.csproj">

@@ -214,6 +214,14 @@ namespace ChatbotBackend
             return new Message(date, "Chatbot [>]:", response);
         }
 
+        public String getRate(){
+            return this.rate;
+        }
+
+        public void setRate(String rate){
+            this.rate = rate;
+        }
+
         public int GetSeed()
         {
             return this.seed;
