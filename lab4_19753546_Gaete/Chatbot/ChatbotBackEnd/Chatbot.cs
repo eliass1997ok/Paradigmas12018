@@ -145,7 +145,7 @@ namespace ChatbotBackend
                 }
             }
 
-            if (str.ToLower() == "no"){
+            if (str.ToLower().Contains("no")){
                 return new List<String>(new String[] { "no" });
             }
 
@@ -158,7 +158,7 @@ namespace ChatbotBackend
                 int position = (int)((this.generator.NextDouble() * 20) % 2);
                 String response = str + " " + this.responses[this.seed][1][position];
 
-                return new Message(date, "Chatbot [>]:", response);
+                return new Message(date, "Chatbot [>]: ", response);
             } else {
                 if (this.intersect(str) != null){
                     if (this.intersect(str).Count == 2){
@@ -169,7 +169,7 @@ namespace ChatbotBackend
                         int position = (int)((this.generator.NextDouble() * 20) % 2);
                         String response = placeToTravel + " " + this.responses[this.seed][2][position] + " " + tickets + "¿Desea confirmar esos pasajes?";
 
-                        return new Message(date, "Chatbot [>]:", response);
+                        return new Message(date, "Chatbot [>]: ", response);
                     } else {
                         if (this.confirmed && (this.intersect(str)[0] == "sí" || this.intersect(str)[0] == "sí")){
                             DateTime date = DateTime.Now;
@@ -177,14 +177,14 @@ namespace ChatbotBackend
                             int position = (int)((this.generator.NextDouble() * 20) % 2);
                             String response = this.responses[this.seed][3][position];
 
-                            return new Message(date, "Chatbot [>]:", response);
+                            return new Message(date, "Chatbot [>]: ", response);
                         } else {
                             this.confirmed = false;
                             DateTime date = DateTime.Now;
                             int position = (int)((this.generator.NextDouble() * 20) % 2);
                             String response = this.responses[this.seed][4][position];
 
-                            return new Message(date, "Chatbot [>]:", response);
+                            return new Message(date, "Chatbot [>]: ", response);
                         }
                     }
                 } else {
@@ -192,7 +192,7 @@ namespace ChatbotBackend
                     int position = (int)((this.generator.NextDouble() * 20) % 2);
                     String response = this.responses[this.seed][5][position];
 
-                    return new Message(date, "Chatbot [>]:", response);
+                    return new Message(date, "Chatbot [>]: ", response);
                 }
             }
         }

@@ -48,8 +48,10 @@ namespace ChatbotFrontend
 			this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
 			this.textview7 = new global::Gtk.TextView();
+			this.textview7.Buffer.Text = global::Mono.Unix.Catalog.GetString("Nota del\nChatbot");
 			this.textview7.CanFocus = true;
 			this.textview7.Name = "textview7";
+			this.textview7.Editable = false;
 			this.GtkScrolledWindow1.Add(this.textview7);
 			this.vbox8.Add(this.GtkScrolledWindow1);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox8[this.GtkScrolledWindow1]));
@@ -84,8 +86,10 @@ namespace ChatbotFrontend
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
 			this.textview5 = new global::Gtk.TextView();
+			this.textview5.Buffer.Text = global::Mono.Unix.Catalog.GetString("Nota del\nUsuario");
 			this.textview5.CanFocus = true;
 			this.textview5.Name = "textview5";
+			this.textview5.Editable = false;
 			this.GtkScrolledWindow.Add(this.textview5);
 			this.vbox6.Add(this.GtkScrolledWindow);
 			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox6[this.GtkScrolledWindow]));

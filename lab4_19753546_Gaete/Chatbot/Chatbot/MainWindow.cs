@@ -3,6 +3,7 @@ using Gtk;
 using System.IO;
 using ChatbotBackend;
 
+
 namespace ChatbotFrontend
 {
     public partial class MainWindow : Gtk.Window
@@ -132,17 +133,43 @@ namespace ChatbotFrontend
                 FileChooserDialog fcd = new FileChooserDialog("Guardar Historial", this, FileChooserAction.Save,
     "Seleccionar Directorio", ResponseType.Ok, "Cancelar", ResponseType.Close);
                 fcd.SelectMultiple = false;
+                fcd.CurrentName = "filename_historial";
                 fcd.Run(); // This opens the window and waits for the response
                 String[] messages = this.log.messagesToStrings();
-                File.WriteAllLines(fcd.Filename, messages);
+
+                if (fcd.Filename != null){
+                    File.WriteAllLines(fcd.Filename + ".log", messages);
+                    textview1.Buffer.Text += "Sistema [!]: Archivo log escrito satisfactoriamente.\n";
+                }
+
                 fcd.Destroy();
-                textview1.Buffer.Text += "Sistema [!]: Archivo log escrito satisfactoriamente.\n";
+
             }
             else
             {
                 textview1.Buffer.Text += "Sistema [!]: El log no contiene mensajes. Por favor, inicie una conversación.\n";
             }
 
+        }
+
+        protected void OnButton7Clicked(object sender, EventArgs e)
+        {
+            FileChooserDialog fcd = new FileChooserDialog("Leer Historial", this, FileChooserAction.Open,
+"Seleccionar Archivo", ResponseType.Ok, "Cancelar", ResponseType.Close);
+            fcd.Run();
+
+            if (fcd.Filename != null && fcd.Filename.Contains(".log")){
+                textview1.Buffer.Text += "Sistema [!]: Archivo log cargado satisfactoriamente.\n";
+                String[] lines = File.ReadAllLines(fcd.Filename);
+                foreach (String str in lines){
+                    if (str != "\n")
+                        textview1.Buffer.Text += str + "\n";
+                }
+            } else {
+                textview1.Buffer.Text += "Sistema [!]: No se ha proporcionado un archivo log.\n";
+            }
+
+            fcd.Destroy();
         }
     }
 }

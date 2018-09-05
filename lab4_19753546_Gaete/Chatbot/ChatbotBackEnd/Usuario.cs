@@ -11,16 +11,6 @@ namespace ChatbotBackend
             this.name = "Usuario";
         }
 
-        public Message sendMessage(String msg)
-        {
-            if (msg.Length == 0)
-            {
-                return new Message(DateTime.Now, "Sistema [!]: ", "No se ha ingresado texto.");
-            }
-
-            return new Message(DateTime.Now, this.name, msg);
-        }
-
         public String getName(){
             return this.name;
         }

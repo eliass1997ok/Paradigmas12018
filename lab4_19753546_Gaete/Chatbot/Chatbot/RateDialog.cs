@@ -9,6 +9,8 @@ namespace ChatbotFrontend
         public RateDialog()
         {
             this.Build();
+            this.userRate = "0";
+            this.chatbotRate = "0";
         }
 
         protected void OnButtonOkClicked(object sender, EventArgs e)

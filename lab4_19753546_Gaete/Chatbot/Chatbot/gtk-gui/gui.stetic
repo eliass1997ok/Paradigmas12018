@@ -11,6 +11,9 @@
     <property name="MemberName" />
     <property name="Title" translatable="yes">Chatbot</property>
     <property name="WindowPosition">CenterOnParent</property>
+    <property name="DefaultWidth">700</property>
+    <property name="DefaultHeight">500</property>
+    <property name="Gravity">Center</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <widget class="Gtk.HBox" id="hbox1">
@@ -161,24 +164,10 @@
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Cargar Log</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButton7Clicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Button" id="button9">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Rate Chat</property>
-                <property name="UseUnderline">True</property>
-              </widget>
-              <packing>
-                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -194,7 +183,7 @@
                 <signal name="Clicked" handler="OnEndDialogClicked" />
               </widget>
               <packing>
-                <property name="Position">4</property>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -211,7 +200,7 @@
               </widget>
               <packing>
                 <property name="PackType">End</property>
-                <property name="Position">5</property>
+                <property name="Position">4</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -311,7 +300,9 @@
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="ShowScrollbars">True</property>
-                        <property name="Text" translatable="yes" />
+                        <property name="Editable">False</property>
+                        <property name="Text" translatable="yes">Nota del
+Chatbot</property>
                       </widget>
                     </child>
                   </widget>
@@ -360,7 +351,9 @@
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="ShowScrollbars">True</property>
-                        <property name="Text" translatable="yes" />
+                        <property name="Editable">False</property>
+                        <property name="Text" translatable="yes">Nota del
+Usuario</property>
                       </widget>
                     </child>
                   </widget>

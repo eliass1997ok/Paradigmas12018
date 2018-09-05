@@ -32,8 +32,6 @@ namespace ChatbotFrontend
 
 		private global::Gtk.Button button7;
 
-		private global::Gtk.Button button9;
-
 		private global::Gtk.Button endDialog;
 
 		private global::Gtk.Button ClearChat;
@@ -45,6 +43,9 @@ namespace ChatbotFrontend
 			this.Name = "ChatbotFrontend.MainWindow";
 			this.Title = global::Mono.Unix.Catalog.GetString("Chatbot");
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
+			this.DefaultWidth = 700;
+			this.DefaultHeight = 500;
+			this.Gravity = ((global::Gdk.Gravity)(5));
 			// Container child ChatbotFrontend.MainWindow.Gtk.Container+ContainerChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
@@ -160,27 +161,16 @@ namespace ChatbotFrontend
 			w12.Expand = false;
 			w12.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
-			this.button9 = new global::Gtk.Button();
-			this.button9.CanFocus = true;
-			this.button9.Name = "button9";
-			this.button9.UseUnderline = true;
-			this.button9.Label = global::Mono.Unix.Catalog.GetString("Rate Chat");
-			this.vbox3.Add(this.button9);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button9]));
-			w13.Position = 3;
-			w13.Expand = false;
-			w13.Fill = false;
-			// Container child vbox3.Gtk.Box+BoxChild
 			this.endDialog = new global::Gtk.Button();
 			this.endDialog.CanFocus = true;
 			this.endDialog.Name = "endDialog";
 			this.endDialog.UseUnderline = true;
 			this.endDialog.Label = global::Mono.Unix.Catalog.GetString("Terminar Chat");
 			this.vbox3.Add(this.endDialog);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.endDialog]));
-			w14.Position = 4;
-			w14.Expand = false;
-			w14.Fill = false;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.endDialog]));
+			w13.Position = 3;
+			w13.Expand = false;
+			w13.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.ClearChat = new global::Gtk.Button();
 			this.ClearChat.CanFocus = true;
@@ -188,28 +178,27 @@ namespace ChatbotFrontend
 			this.ClearChat.UseUnderline = true;
 			this.ClearChat.Label = global::Mono.Unix.Catalog.GetString("Limpiar Pantalla");
 			this.vbox3.Add(this.ClearChat);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.ClearChat]));
-			w15.PackType = ((global::Gtk.PackType)(1));
-			w15.Position = 5;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.ClearChat]));
+			w14.PackType = ((global::Gtk.PackType)(1));
+			w14.Position = 4;
+			w14.Expand = false;
+			w14.Fill = false;
+			this.hbox1.Add(this.vbox3);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vbox3]));
+			w15.Position = 1;
 			w15.Expand = false;
 			w15.Fill = false;
-			this.hbox1.Add(this.vbox3);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vbox3]));
-			w16.Position = 1;
-			w16.Expand = false;
-			w16.Fill = false;
 			this.Add(this.hbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
-			this.DefaultWidth = 400;
-			this.DefaultHeight = 300;
 			this.Show();
 			this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
 			this.SendButton.Clicked += new global::System.EventHandler(this.OnSendButtonClicked);
 			this.beginDialog.Clicked += new global::System.EventHandler(this.clickedBegin);
 			this.saveLog.Clicked += new global::System.EventHandler(this.OnSaveLogClicked);
+			this.button7.Clicked += new global::System.EventHandler(this.OnButton7Clicked);
 			this.endDialog.Clicked += new global::System.EventHandler(this.OnEndDialogClicked);
 			this.ClearChat.Clicked += new global::System.EventHandler(this.OnClearChatClicked);
 		}
