@@ -5,12 +5,21 @@ using ChatbotBackend;
 
 namespace ChatbotFrontend
 {
+    /**
+    * Esta clase permite instanciar una ventana principal del chat.
+    *
+    */
     public partial class MainWindow : Gtk.Window
     {
         private Chatbot chatbot;
         private Usuario user;
         private Log log;
 
+        /**
+        * Constructor de la clase. Instancia al usuario y al log, mientras que el chatbot es seteado en null.
+        * Se muestra un mensaje en el textview principal
+        * 
+        */        
         public MainWindow() : base(Gtk.WindowType.Toplevel)
         {
             Build();
@@ -20,12 +29,20 @@ namespace ChatbotFrontend
             textview1.Buffer.Text = "Sistema [!]: Bienvenido al Chatbot de turismo #1 de Santiago.\nEste Chatbot le permitirá comprar pasajes con destino a cualquier capital regional del país.\n";
         }
 
+        /**
+        * Método que permite detener la aplicación en caso de que se cierre la ventana.
+        * 
+        */
         protected void OnDeleteEvent(object sender, DeleteEventArgs a)
         {
             Application.Quit();
             a.RetVal = true;
         }
 
+        /**
+        * Método que permite enviar mensajes al chatbot.
+        *
+        */
         protected void OnSendButtonClicked(object sender, EventArgs e)
         {
             if (this.chatbot == null)
@@ -72,11 +89,19 @@ namespace ChatbotFrontend
             }
         }
 
+        /**
+        * Método que permite limpiar el textview principal.
+        *
+        */
         protected void OnClearChatClicked(object sender, EventArgs e)
         {
             textview1.Buffer.Text = "";
         }
 
+        /**
+        * Método que permite dar inicio al chat.
+        *
+        */        
         protected void clickedBegin(object sender, EventArgs e)
         {
             int seed = 0;
@@ -97,6 +122,10 @@ namespace ChatbotFrontend
             this.log.addMessage(msg);
         }
 
+        /**
+        * Método que permite finalizar el chat.
+        *
+        */
         protected void OnEndDialogClicked(object sender, EventArgs e)
         {
             if (this.chatbot != null)
@@ -122,6 +151,10 @@ namespace ChatbotFrontend
             }
         }
 
+        /**
+        * Método que permite guardar un log.
+        *
+        */
         protected void OnSaveLogClicked(object sender, EventArgs e)
         {
             if (this.log.getLog().Count != 0)
@@ -146,6 +179,10 @@ namespace ChatbotFrontend
             }
         }
 
+        /**
+        * Método que permite cargar un log.
+        *
+        */        
         protected void OnCargarLogClicked(object sender, EventArgs e)
         {
             FileChooserDialog fcd = new FileChooserDialog("Leer Historial", this, FileChooserAction.Open,
