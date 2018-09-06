@@ -2,6 +2,16 @@
 using System.Collections.Generic;
 namespace ChatbotBackend
 {
+    /**
+    * La clase Chatbot corresponde, como su nombre indica, al chatbot en si. Este es el encargado de entregar respuestas
+    * automáticas al usuario en base a un reconocimiento de palabras clave dentro del los mensajes enviados por el usuario.
+    * El chatbot cuenta con dos personalidades. Una de estas es una personalidad agradable/formal (siendo posible elegirla 
+    * a través de la utilización de una semilla par, o no entregando semilla, puesto que es la personalidad por defecto),
+    * mientras que la otra personalidad es agradable/divertida, y un poco más informal (seleccionable mediante la utilización
+    * de una semilla impar). La semilla por otra parte, le agrega aleatoriedad a las respuestas que entrega el chatbot frente
+    * a diversas situaciones.
+    *
+    */
     public class Chatbot
     {
         private List<List<List<String>>> responses;
@@ -9,6 +19,13 @@ namespace ChatbotBackend
         private Random generator;
         private Boolean confirmed;
         private String rate;
+
+        /**
+        * Constructor que permite la instanciación de un chatbot con la personalidad por defecto. Para utilizar los mismos 
+        * algoritmos, independiente del constructor, es que de todas formas se establecen las dos personalidades, a pesar de 
+        * necesitar solo una.
+        *
+        */
 
         public Chatbot()
         {
@@ -20,6 +37,12 @@ namespace ChatbotBackend
             this.fillResponses();
         }
 
+        /**
+        * Constructor que permite la instanciación de un chatbot con una personalidad elegida por el usuario.
+        *
+        * seed: Número entero que permite determinar la personalidad del chatbot, además de agregar aleatoriedad a sus respuestas.
+        *
+        */
         public Chatbot(int seed)
         {
             this.seed = seed % 2;
@@ -29,6 +52,11 @@ namespace ChatbotBackend
             this.responses = new List<List<List<String>>>();
             this.fillResponses();
         }
+
+        /**
+        * Método que permite darle las posibles respuestas que puede llegar a entregar el chatbot.
+        *
+        */
 
         public void fillResponses(){
             List<List<String>> personality1;
@@ -110,6 +138,16 @@ namespace ChatbotBackend
             this.responses.Add(personality2);
         }
 
+        /**
+        * Método que permite la intersección de palabras de un string, con una lista de palabras clave, con el fin de
+        * deteminar el tipo de mensaje que entrega el usuario.
+        *
+        * str: correponde al string ingresado por el usuario.
+        * 
+        * Se retorna una lista con las palabras claves encontradas dentro del mensaje del usuario.
+        *
+        */ 
+
         public List<String> intersect(String str){
             List<List<String>> cities;
             List<List<String>> positive;
@@ -152,6 +190,16 @@ namespace ChatbotBackend
             return null;
         }
 
+        /**
+        * Método que permite al chatbot identificar la respuesta que se le debe entregar al usuario, en base a los mensajes
+        * que existen dentro del log como en el mensaje entregado por el usuario.
+        *
+        * log: correponde al historial de mensajes intercambiados por el usuario y el chatbot en el actual chat.
+        * str: correponde al último string ingresado por el usuario.
+        * 
+        * Retorna un mensaje de respuesta frente al mensaje ingresado por el usuario.
+        *
+        */ 
         public Message determineAnswer(List<Message> log, String str){
             if (log.Count == 2){
                 DateTime date = DateTime.Now;
@@ -197,6 +245,12 @@ namespace ChatbotBackend
             }
         }
 
+        /**
+        * Método que permite al chatbot entregar un mensaje con el cual saludar al usuario.
+        *
+        * Retorna un mensaje saludando al usuario.
+        *
+        */ 
         public Message greetings(){
             DateTime date = DateTime.Now;
             this.generator = new Random();
@@ -206,6 +260,12 @@ namespace ChatbotBackend
             return new Message(date, "Chatbot [>]: ", response);
         }
 
+        /**
+        * Método que permite al chatbot entregar un mensaje con el cual despedirse del usuario.
+        *
+        * Retorna un mensaje despidiéndose del usuario.
+        *
+        */ 
         public Message goodbye(){
             DateTime date = DateTime.Now;
             int position = (int)((this.generator.NextDouble() * 20) % 2);
@@ -214,14 +274,30 @@ namespace ChatbotBackend
             return new Message(date, "Chatbot [>]:", response);
         }
 
+        /**
+        * Método que permite obtener el rate del Chatbot.
+        *
+        * Retorna un String que representa el rate del chatbot.
+        *
+        */ 
         public String getRate(){
             return this.rate;
         }
 
+        /**
+        * Método que permite establecer el rate del Chatbot.
+        *
+        */ 
         public void setRate(String rate){
             this.rate = rate;
         }
 
+        /**
+        * Método que permite obtener la semilla del Chatbot.
+        *
+        * Retorna un entero que representa la semilla del chatbot.
+        *
+        */ 
         public int GetSeed()
         {
             return this.seed;

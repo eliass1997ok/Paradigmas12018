@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using Gtk;
 using System.IO;
 using ChatbotBackend;
-
 
 namespace ChatbotFrontend
 {
@@ -102,7 +101,6 @@ namespace ChatbotFrontend
         {
             if (this.chatbot != null)
             {
-
                 Message msg = this.chatbot.goodbye();
                 this.log.addMessage(msg);
                 this.chatbot = null;
@@ -117,13 +115,11 @@ namespace ChatbotFrontend
                 textview1.Buffer.Text += "Sistema [!]: Nota del Usuario -> " + rateDialog.getUserRate() + "\n";
                 textview1.Buffer.Text += "Sistema [!]: Nota del Chatbot -> " + rateDialog.getChatbotRate() + "\n";
                 textview1.Buffer.Text += "Sistema [!]: Notas puestas de manera satisfactoria. Esto se verá reflejado en el log.\n";
-
             }
             else
             {
                 textview1.Buffer.Text += "Sistema [!]: No se puede finalizar una conversación no iniciada!. Por favor, inicie una conversación.\n";
             }
-
         }
 
         protected void OnSaveLogClicked(object sender, EventArgs e)
@@ -131,10 +127,10 @@ namespace ChatbotFrontend
             if (this.log.getLog().Count != 0)
             {
                 FileChooserDialog fcd = new FileChooserDialog("Guardar Historial", this, FileChooserAction.Save,
-    "Seleccionar Directorio", ResponseType.Ok, "Cancelar", ResponseType.Close);
+                "Seleccionar Directorio", ResponseType.Ok, "Cancelar", ResponseType.Close);
                 fcd.SelectMultiple = false;
                 fcd.CurrentName = "filename_historial";
-                fcd.Run(); // This opens the window and waits for the response
+                fcd.Run();
                 String[] messages = this.log.messagesToStrings();
 
                 if (fcd.Filename != null){
@@ -143,29 +139,31 @@ namespace ChatbotFrontend
                 }
 
                 fcd.Destroy();
-
             }
             else
             {
                 textview1.Buffer.Text += "Sistema [!]: El log no contiene mensajes. Por favor, inicie una conversación.\n";
             }
-
         }
 
-        protected void OnButton7Clicked(object sender, EventArgs e)
+        protected void OnCargarLogClicked(object sender, EventArgs e)
         {
             FileChooserDialog fcd = new FileChooserDialog("Leer Historial", this, FileChooserAction.Open,
-"Seleccionar Archivo", ResponseType.Ok, "Cancelar", ResponseType.Close);
+            "Seleccionar Archivo", ResponseType.Ok, "Cancelar", ResponseType.Close);
             fcd.Run();
 
-            if (fcd.Filename != null && fcd.Filename.Contains(".log")){
+            if (fcd.Filename != null && fcd.Filename.Contains(".log"))
+            {
                 textview1.Buffer.Text += "Sistema [!]: Archivo log cargado satisfactoriamente.\n";
                 String[] lines = File.ReadAllLines(fcd.Filename);
-                foreach (String str in lines){
+                foreach (String str in lines)
+                {
                     if (str != "\n")
                         textview1.Buffer.Text += str + "\n";
                 }
-            } else {
+            }
+            else
+            {
                 textview1.Buffer.Text += "Sistema [!]: No se ha proporcionado un archivo log.\n";
             }
 

@@ -30,7 +30,7 @@ namespace ChatbotFrontend
 
 		private global::Gtk.Button saveLog;
 
-		private global::Gtk.Button button7;
+		private global::Gtk.Button CargarLog;
 
 		private global::Gtk.Button endDialog;
 
@@ -150,13 +150,13 @@ namespace ChatbotFrontend
 			w11.Expand = false;
 			w11.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
-			this.button7 = new global::Gtk.Button();
-			this.button7.CanFocus = true;
-			this.button7.Name = "button7";
-			this.button7.UseUnderline = true;
-			this.button7.Label = global::Mono.Unix.Catalog.GetString("Cargar Log");
-			this.vbox3.Add(this.button7);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.button7]));
+			this.CargarLog = new global::Gtk.Button();
+			this.CargarLog.CanFocus = true;
+			this.CargarLog.Name = "CargarLog";
+			this.CargarLog.UseUnderline = true;
+			this.CargarLog.Label = global::Mono.Unix.Catalog.GetString("Cargar Log");
+			this.vbox3.Add(this.CargarLog);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.CargarLog]));
 			w12.Position = 2;
 			w12.Expand = false;
 			w12.Fill = false;
@@ -198,7 +198,7 @@ namespace ChatbotFrontend
 			this.SendButton.Clicked += new global::System.EventHandler(this.OnSendButtonClicked);
 			this.beginDialog.Clicked += new global::System.EventHandler(this.clickedBegin);
 			this.saveLog.Clicked += new global::System.EventHandler(this.OnSaveLogClicked);
-			this.button7.Clicked += new global::System.EventHandler(this.OnButton7Clicked);
+			this.CargarLog.Clicked += new global::System.EventHandler(this.OnCargarLogClicked);
 			this.endDialog.Clicked += new global::System.EventHandler(this.OnEndDialogClicked);
 			this.ClearChat.Clicked += new global::System.EventHandler(this.OnClearChatClicked);
 		}

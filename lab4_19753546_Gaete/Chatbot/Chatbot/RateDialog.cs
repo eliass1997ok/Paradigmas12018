@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace ChatbotFrontend
 {
     public partial class RateDialog : Gtk.Dialog
@@ -30,3 +30,4 @@ namespace ChatbotFrontend
         }
     }
 }
+
