@@ -142,6 +142,10 @@ public class Chat{
                             this.user.setName(name);
 
                             Message nameMessage = new Message(new Date(), "Usuario", name);
+                            this.log.addMessage(nameMessage);
+	                        Message answer = this.chatbot.determineAnswer(this.log.getLog(), nameMessage.getContent());
+	                        this.log.addMessage(answer);
+	                        this.startedDialog = true;
 
                             break;
 

@@ -1,8 +1,11 @@
 ﻿<Properties StartupConfiguration="{B46FB59A-CF95-4962-A900-B9DF01671B86}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="Chatbot/MainWindow.cs">
     <Files>
-      <File FileName="Chatbot/RateDialog.cs" Line="1" Column="1" />
-      <File FileName="Chatbot/MainWindow.cs" Line="28" Column="25" />
+      <File FileName="Chatbot/MainWindow.cs" Line="28" Column="28" />
+      <File FileName="ChatbotBackEnd/Chatbot.cs" Line="147" Column="21" />
+      <File FileName="ChatbotBackEnd/Log.cs" Line="51" Column="12" />
+      <File FileName="ChatbotBackEnd/Message.cs" Line="1" Column="1" />
+      <File FileName="ChatbotBackEnd/Usuario.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
